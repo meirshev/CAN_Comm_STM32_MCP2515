@@ -80,23 +80,6 @@ PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
 /* USER CODE BEGIN PV */
 
-int 	count = 0;
-char 	uart_buf[50];
-int 	uart_buf_len;
-int 	rx_ret_val;
-uint16_t  timers_arr[100];
-uint16_t  timer_val = 0;
-int		data_cntr = 0;
-int 	sent_counter = 0;
-int 	counter_1 = 0;
-int 	counter_2 = 0;
-int 	counter_3 = 0;
-
-uint8_t		rx_data_buf_1[100][2];
-uint8_t		rx_data_buf_2[100][2];
-uint8_t		rx_data_buf_3[100][2];
-int 	start = 1;
-int 	validation = 0;
 
 /* USER CODE END PV */
 
@@ -125,7 +108,7 @@ static void MX_TIM13_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  bool ret_val;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -154,37 +137,6 @@ int main(void)
   MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
 
-  printToConsole(&huart3, "Program Started\r\n");
-  printToConsole(&huart3, "Please press 1 to initialize MCP25135:\r\n");
-
-  block(&huart3, 1);
-
-  if(CANSPI_Initialize())
-  {
-	  printToConsole(&huart3, "MCP2515 Initialized Successfully\r\n");
-  }else
-  {
-	  printToConsole(&huart3, "MCP2515 Initialization Failed\r\n");
-  }
-  MCP2515_BitModify(MCP2515_CANINTE, MCP2515_INT_MASK, MCP2515_ENB_INT);
-
-  printToConsole(&huart3, "Please press 1 to initialize the timer:\r\n");
-  block(&huart3, 1);
-  if (HAL_TIM_Base_Start(&htim13) == 0)
-  {
-	  printToConsole(&huart3, "Timer initialized successfully:\r\n");
-  }else
-  {
-	  printToConsole(&huart3, "Timer initialization failed\r\n");
-  }
-
-  printToConsole(&huart3, "Please press 1 to start sending data:\r\n");
-  block(&huart3, 1);
-
-  HAL_TIM_Base_Start_IT(&htim2);
-
-  printToConsole(&huart3, "MCU is currently sending data\r\n");
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -194,39 +146,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	//print_to_console(&huart3, "Please press 1 to transmitting data:\r\n");
-
-	//block(&huart3, 1);
-	//if(CANSPI_Receive_2B(&rxMessage_2b))
-	//{
-		//txMessage_2b.frame.idType = rxMessage_2b.frame.idType;
-		//txMessage_2b.frame.id = rxMessage_2b.frame.id;
-		//txMessage_2b.frame.dlc = rxMessage_2b.frame.dlc;
-		//txMessage_2b.frame.data0 = rxMessage_2b.frame.data0 + 1;
-		//txMessage_2b.frame.data1 = rxMessage_2b.frame.data1 + 1;
-		//CANSPI_Transmit_2B(&txMessage_2b);
-
-		//print_to_console(&huart3, "Data received and sent successfully\r\n");
-
-		//print_to_console(&huart3, "Press 1 to start receiving again\r\n");
-		//block(&huart3, 1);
-		//print_to_console(&huart3, "MCU is currently receiving CAN data\r\n");
-	//}
-
-	/*txMessage.frame.idType = dSTANDARD_CAN_MSG_ID_2_0B;
-	txMessage.frame.id = 0x0A;
-	txMessage.frame.dlc = 8;
-	txMessage.frame.data0 = 0;
-	txMessage.frame.data1 = 1;
-	txMessage.frame.data2 = 2;
-	txMessage.frame.data3 = 3;
-	txMessage.frame.data4 = 4;
-	txMessage.frame.data5 = 5;
-	txMessage.frame.data6 = 6;
-	txMessage.frame.data7 = 7;
-	CANSPI_Transmit(&txMessage);*/
-
-	HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -632,12 +551,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
-	timer_val = __HAL_TIM_GET_COUNTER(&htim13) - timer_val;
-	timers_arr[sent_counter] = timer_val;
-
-	printToConsole(&huart3, "Timer interrupts terminated");
-	HAL_TIM_Base_Stop_IT(&htim2);
-	timer_val = __HAL_TIM_GET_COUNTER(&htim13);
 
 }
 /* USER CODE END 4 */
