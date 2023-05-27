@@ -6,9 +6,10 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Core/Src/CANSPI.c \
+../Core/Src/CAN_comm.c \
+../Core/Src/CAN_ds.c \
 ../Core/Src/MCP2515.c \
 ../Core/Src/debug_tools.c \
-../Core/Src/flash_toolkit.c \
 ../Core/Src/main.c \
 ../Core/Src/stm32h7xx_hal_msp.c \
 ../Core/Src/stm32h7xx_it.c \
@@ -18,9 +19,10 @@ C_SRCS += \
 
 OBJS += \
 ./Core/Src/CANSPI.o \
+./Core/Src/CAN_comm.o \
+./Core/Src/CAN_ds.o \
 ./Core/Src/MCP2515.o \
 ./Core/Src/debug_tools.o \
-./Core/Src/flash_toolkit.o \
 ./Core/Src/main.o \
 ./Core/Src/stm32h7xx_hal_msp.o \
 ./Core/Src/stm32h7xx_it.o \
@@ -30,9 +32,10 @@ OBJS += \
 
 C_DEPS += \
 ./Core/Src/CANSPI.d \
+./Core/Src/CAN_comm.d \
+./Core/Src/CAN_ds.d \
 ./Core/Src/MCP2515.d \
 ./Core/Src/debug_tools.d \
-./Core/Src/flash_toolkit.d \
 ./Core/Src/main.d \
 ./Core/Src/stm32h7xx_hal_msp.d \
 ./Core/Src/stm32h7xx_it.d \
@@ -48,7 +51,7 @@ Core/Src/%.o Core/Src/%.su: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/CANSPI.d ./Core/Src/CANSPI.o ./Core/Src/CANSPI.su ./Core/Src/MCP2515.d ./Core/Src/MCP2515.o ./Core/Src/MCP2515.su ./Core/Src/debug_tools.d ./Core/Src/debug_tools.o ./Core/Src/debug_tools.su ./Core/Src/flash_toolkit.d ./Core/Src/flash_toolkit.o ./Core/Src/flash_toolkit.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32h7xx_hal_msp.d ./Core/Src/stm32h7xx_hal_msp.o ./Core/Src/stm32h7xx_hal_msp.su ./Core/Src/stm32h7xx_it.d ./Core/Src/stm32h7xx_it.o ./Core/Src/stm32h7xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32h7xx.d ./Core/Src/system_stm32h7xx.o ./Core/Src/system_stm32h7xx.su
+	-$(RM) ./Core/Src/CANSPI.d ./Core/Src/CANSPI.o ./Core/Src/CANSPI.su ./Core/Src/CAN_comm.d ./Core/Src/CAN_comm.o ./Core/Src/CAN_comm.su ./Core/Src/CAN_ds.d ./Core/Src/CAN_ds.o ./Core/Src/CAN_ds.su ./Core/Src/MCP2515.d ./Core/Src/MCP2515.o ./Core/Src/MCP2515.su ./Core/Src/debug_tools.d ./Core/Src/debug_tools.o ./Core/Src/debug_tools.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32h7xx_hal_msp.d ./Core/Src/stm32h7xx_hal_msp.o ./Core/Src/stm32h7xx_hal_msp.su ./Core/Src/stm32h7xx_it.d ./Core/Src/stm32h7xx_it.o ./Core/Src/stm32h7xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32h7xx.d ./Core/Src/system_stm32h7xx.o ./Core/Src/system_stm32h7xx.su
 
 .PHONY: clean-Core-2f-Src
 

@@ -1,0 +1,8 @@
+../Core/Src/CAN_comm.c:23:10:initCANComm	8	static
+../Core/Src/CAN_comm.c:34:5:sendDataManager	24	static
+../Core/Src/CAN_comm.c:51:6:loop	4	static
+../Core/Src/CAN_comm.c:56:5:readNextMsg	16	static
+../Core/Src/CAN_comm.c:68:5:configID	24	static
+../Core/Src/CAN_comm.c:73:6:_addToRecvQ	16	static
+../Core/Src/CAN_comm.c:78:6:_convertToCANFormat	16	static
+../Core/Src/CAN_comm.c:83:6:_sendCANMsg	16	static

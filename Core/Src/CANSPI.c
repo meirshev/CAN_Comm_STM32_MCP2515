@@ -1,7 +1,26 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file           : CANSPI.c
+  * @brief          : SPI based MCP2515 CAN communications interface.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+
 #include "CANSPI.h"
 #include "MCP2515.h"
 
-/** Local Function Prototypes */  
+/** Local Functions Prototypes */
 static uint32_t convertReg2ExtendedCANid(uint8_t tempRXBn_EIDH, uint8_t tempRXBn_EIDL, uint8_t tempRXBn_SIDH, uint8_t tempRXBn_SIDL);
 static uint32_t convertReg2StandardCANid(uint8_t tempRXBn_SIDH, uint8_t tempRXBn_SIDL) ;
 static void convertCANid2Reg(uint32_t tempPassedInID, uint8_t canIdType, id_reg_t *passedIdReg);
@@ -10,7 +29,6 @@ static void convertCANid2Reg(uint32_t tempPassedInID, uint8_t canIdType, id_reg_
 ctrl_status_t ctrlStatus;
 ctrl_error_status_t errorStatus;
 id_reg_t idReg;
-collision_counter = 0;
 
 /** CAN SPI APIs */ 
 
@@ -51,12 +69,12 @@ bool CANSPI_Initialize(void)
   
   /* Rx Filter values */
   RXF0reg.RXF0SIDH = 0x00;      
-  RXF0reg.RXF0SIDL = 0x00;      //Starndard Filter
+  RXF0reg.RXF0SIDL = 0x00;
   RXF0reg.RXF0EID8 = 0x00;
   RXF0reg.RXF0EID0 = 0x00;
   
   RXF1reg.RXF1SIDH = 0x00;
-  RXF1reg.RXF1SIDL = 0x08;      //Exntended Filter
+  RXF1reg.RXF1SIDL = 0x08;
   RXF1reg.RXF1EID8 = 0x00;
   RXF1reg.RXF1EID0 = 0x00;
   
@@ -118,7 +136,7 @@ bool CANSPI_Initialize(void)
   /* 1 0 000 011(4tq) */  
   MCP2515_WriteByte(MCP2515_CNF3, 0x83);
   
-  /* Normal 모드로 설정 */
+  /* Normal */
   if(!MCP2515_SetNormalMode())
     return false;
   
@@ -137,16 +155,16 @@ uint8_t CANSPI_Transmit(uCAN_MSG *tempCanMsg)
 
   ctrlStatus.ctrl_status = MCP2515_ReadStatus();
 
-  /* 현재 Transmission 이 Pending 되지 않은 버퍼를 찾아서 전송한다. */
+  /* Transmission Pending. */
   if (ctrlStatus.TXB0REQ != 1)
   {
-    /* ID Type에 맞게 변환 */
+    /* ID Type */
     convertCANid2Reg(tempCanMsg->frame.id, tempCanMsg->frame.idType, &idReg);
 
-    /* Tx Buffer에 전송할 데이터 Loading */
+    /* Tx Buffer Loading */
     MCP2515_LoadTxSequence(MCP2515_LOAD_TXB0SIDH, &(idReg.tempSIDH), tempCanMsg->frame.dlc, &(tempCanMsg->frame.data0));
 
-    /* Tx Buffer의 데이터 전송요청 */
+    /* Tx Buffer */
     MCP2515_RequestToSend(MCP2515_RTS_TX0);
 
     returnValue = 1;
@@ -173,57 +191,6 @@ uint8_t CANSPI_Transmit(uCAN_MSG *tempCanMsg)
   return (returnValue);
 }
 
-/* CAN */
-uint8_t CANSPI_Transmit_2B(uCAN_MSG_2B *tempCanMsg)
-{
-  uint8_t returnValue = 0;
-  
-  idReg.tempSIDH = 0;
-  idReg.tempSIDL = 0;
-  idReg.tempEID8 = 0;
-  idReg.tempEID0 = 0;
-  
-  ctrlStatus.ctrl_status = MCP2515_ReadStatus();
-  
-  /* 현재 Transmission 이 Pending 되지 않은 버퍼를 찾아서 전송한다. */
-  if (ctrlStatus.TXB0REQ != 1)
-  {
-    /* ID Type에 맞게 변환 */
-    convertCANid2Reg(tempCanMsg->frame.id, tempCanMsg->frame.idType, &idReg);
-    
-    /* Tx Buffer에 전송할 데이터 Loading */
-    MCP2515_LoadTxSequence(MCP2515_LOAD_TXB0SIDH, &(idReg.tempSIDH), tempCanMsg->frame.dlc, &(tempCanMsg->frame.data0));
-    
-    /* Tx Buffer의 데이터 전송요청 */
-    MCP2515_RequestToSend(MCP2515_RTS_TX0);
-    
-    returnValue = 1;
-  }
-  else if (ctrlStatus.TXB1REQ != 1)
-  {
-    convertCANid2Reg(tempCanMsg->frame.id, tempCanMsg->frame.idType, &idReg);
-    
-    MCP2515_LoadTxSequence(MCP2515_LOAD_TXB1SIDH, &(idReg.tempSIDH), tempCanMsg->frame.dlc, &(tempCanMsg->frame.data0));
-    MCP2515_RequestToSend(MCP2515_RTS_TX1);
-    
-    returnValue = 1;
-  }
-  else if (ctrlStatus.TXB2REQ != 1)
-  {
-    convertCANid2Reg(tempCanMsg->frame.id, tempCanMsg->frame.idType, &idReg);
-    
-    MCP2515_LoadTxSequence(MCP2515_LOAD_TXB2SIDH, &(idReg.tempSIDH), tempCanMsg->frame.dlc, &(tempCanMsg->frame.data0));
-    MCP2515_RequestToSend(MCP2515_RTS_TX2);
-    
-    returnValue = 1;
-  }
-  else
-  {
-	  collision_counter++;
-  }
-  
-  return (returnValue);
-}
 
 /* CAN Receive Message */
 uint8_t CANSPI_Receive(uCAN_MSG *tempCanMsg) 
@@ -247,7 +214,7 @@ uint8_t CANSPI_Receive(uCAN_MSG *tempCanMsg)
       MCP2515_ReadRxSequence(MCP2515_READ_RXB1SIDH, rxReg.rx_reg_array, sizeof(rxReg.rx_reg_array));
     }
     
-    /* Decode a Extended Message*/
+    /* Decode an Extended Message*/
     if (rxStatus.msgType == dEXTENDED_CAN_MSG_ID_2_0B)
     {
       tempCanMsg->frame.idType = (uint8_t) dEXTENDED_CAN_MSG_ID_2_0B;
@@ -276,51 +243,7 @@ uint8_t CANSPI_Receive(uCAN_MSG *tempCanMsg)
   return (returnValue);
 }
 
-/* CAN Receive Message */
-uint8_t CANSPI_Receive_2B(uCAN_MSG_2B *tempCanMsg)
-{
-  uint8_t 			returnValue = 0;
-  rx_reg_t_2B 		rxReg;
-  ctrl_rx_status_t 	rxStatus;
-
-  rxStatus.ctrl_rx_status = MCP2515_GetRxStatus();
-
-  /* if a message was received */
-  if (rxStatus.rxBuffer != 0)
-  {
-    /* check in which register the received message and then extract it */
-    if ((rxStatus.rxBuffer == MSG_IN_RXB0)|(rxStatus.rxBuffer == MSG_IN_BOTH_BUFFERS))
-    {
-      MCP2515_ReadRxSequence(MCP2515_READ_RXB0SIDH, rxReg.rx_reg_array, sizeof(rxReg.rx_reg_array));
-    }
-    else if (rxStatus.rxBuffer == MSG_IN_RXB1)
-    {
-      MCP2515_ReadRxSequence(MCP2515_READ_RXB1SIDH, rxReg.rx_reg_array, sizeof(rxReg.rx_reg_array));
-    }
-
-    /* Decode a Extended Message*/
-    if (rxStatus.msgType == dEXTENDED_CAN_MSG_ID_2_0B)
-    {
-      tempCanMsg->frame.idType = (uint8_t) dEXTENDED_CAN_MSG_ID_2_0B;
-      tempCanMsg->frame.id = convertReg2ExtendedCANid(rxReg.RXBnEID8, rxReg.RXBnEID0, rxReg.RXBnSIDH, rxReg.RXBnSIDL);
-    }
-    else
-    {
-      /* Decode a Standard Message*/
-      tempCanMsg->frame.idType = (uint8_t) dSTANDARD_CAN_MSG_ID_2_0B;
-      tempCanMsg->frame.id = convertReg2StandardCANid(rxReg.RXBnSIDH, rxReg.RXBnSIDL);
-    }
-
-    tempCanMsg->frame.dlc   = rxReg.RXBnDLC;
-    tempCanMsg->frame.data0 = rxReg.RXBnD0;
-    tempCanMsg->frame.data1 = rxReg.RXBnD1;
-    returnValue = 1;
-  }
-
-  return (returnValue);
-}
-
-/* 수신 버퍼에 메시지가 있는지 체크 */
+/* Check for awaiting messages */
 uint8_t CANSPI_messagesInBuffer(void)
 {
   uint8_t messageCount = 0;
@@ -340,7 +263,7 @@ uint8_t CANSPI_messagesInBuffer(void)
   return (messageCount);
 }
 
-/* CAN BUS 가 Offline 인지 체크 */
+/* Check if CAN BUS is Offline */
 uint8_t CANSPI_isBussOff(void)
 {
   uint8_t returnValue = 0;
@@ -355,7 +278,7 @@ uint8_t CANSPI_isBussOff(void)
   return (returnValue);
 }
 
-/* Rx Passive Error 상태인지 체크 */
+/* Rx Passive Error */
 uint8_t CANSPI_isRxErrorPassive(void)
 {
   uint8_t returnValue = 0;
@@ -370,7 +293,7 @@ uint8_t CANSPI_isRxErrorPassive(void)
   return (returnValue);
 }
 
-/* Tx Passive Error 상태인지 체크 */
+/* Tx Passive Error */
 uint8_t CANSPI_isTxErrorPassive(void)
 {
   uint8_t returnValue = 0;
@@ -385,7 +308,7 @@ uint8_t CANSPI_isTxErrorPassive(void)
   return (returnValue);
 }
 
-/* Register 저장값을 Extended ID 타입으로 변환하기 위한 함수 */
+/* Convert MCP2515 registers to extended CAN id */
 static uint32_t convertReg2ExtendedCANid(uint8_t tempRXBn_EIDH, uint8_t tempRXBn_EIDL, uint8_t tempRXBn_SIDH, uint8_t tempRXBn_SIDL) 
 {
   uint32_t returnValue = 0;
@@ -407,7 +330,7 @@ static uint32_t convertReg2ExtendedCANid(uint8_t tempRXBn_EIDH, uint8_t tempRXBn
   return (returnValue);
 }
 
-/* Register 저장값을 Standard ID 타입으로 변환하기 위한 함수 */
+/* Convert MCP2515 registers to standard CAN id */
 static uint32_t convertReg2StandardCANid(uint8_t tempRXBn_SIDH, uint8_t tempRXBn_SIDL) 
 {
   uint32_t returnValue = 0;
@@ -420,7 +343,7 @@ static uint32_t convertReg2StandardCANid(uint8_t tempRXBn_SIDH, uint8_t tempRXBn
   return (returnValue);
 }
 
-/* CAN ID를 Register에 저장하기 위한 변환 함수 */
+/* Convert CAN id (standard & extended) to MCP2515 registers format */
 static void convertCANid2Reg(uint32_t tempPassedInID, uint8_t canIdType, id_reg_t *passedIdReg) 
 {
   uint8_t wipSIDL = 0;

@@ -16,6 +16,7 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "string.h"
@@ -97,14 +98,6 @@ uint8_t		rx_data_buf_3[100][2];
 int 	start = 1;
 int 	validation = 0;
 
-uCAN_MSG txMessage_1;
-uCAN_MSG txMessage_2;
-uCAN_MSG txMessage_3;
-
-uCAN_MSG rxMessage;
-
-uCAN_MSG_2B txMessage_2b;
-uCAN_MSG_2B rxMessage_2b;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -161,72 +154,36 @@ int main(void)
   MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
 
-  print_to_console(&huart3, "Program Started\r\n");
-  print_to_console(&huart3, "Please press 1 to initialize MCP25135:\r\n");
+  printToConsole(&huart3, "Program Started\r\n");
+  printToConsole(&huart3, "Please press 1 to initialize MCP25135:\r\n");
 
   block(&huart3, 1);
 
   if(CANSPI_Initialize())
   {
-	  print_to_console(&huart3, "MCP2515 Initialized Successfully\r\n");
+	  printToConsole(&huart3, "MCP2515 Initialized Successfully\r\n");
   }else
   {
-	  print_to_console(&huart3, "MCP2515 Initialization Failed\r\n");
+	  printToConsole(&huart3, "MCP2515 Initialization Failed\r\n");
   }
   MCP2515_BitModify(MCP2515_CANINTE, MCP2515_INT_MASK, MCP2515_ENB_INT);
 
-  print_to_console(&huart3, "Please press 1 to initialize the timer:\r\n");
+  printToConsole(&huart3, "Please press 1 to initialize the timer:\r\n");
   block(&huart3, 1);
   if (HAL_TIM_Base_Start(&htim13) == 0)
   {
-	  print_to_console(&huart3, "Timer initialized successfully:\r\n");
+	  printToConsole(&huart3, "Timer initialized successfully:\r\n");
   }else
   {
-	  print_to_console(&huart3, "Timer initialization failed\r\n");
+	  printToConsole(&huart3, "Timer initialization failed\r\n");
   }
 
-  print_to_console(&huart3, "Please press 1 to start sending data:\r\n");
+  printToConsole(&huart3, "Please press 1 to start sending data:\r\n");
   block(&huart3, 1);
-
-  txMessage_1.frame.idType = dSTANDARD_CAN_MSG_ID_2_0B;
-  txMessage_1.frame.id = 0x0A;
-  txMessage_1.frame.dlc = 8;
-  txMessage_1.frame.data0 = 0;
-  txMessage_1.frame.data1 = 0;
-  txMessage_1.frame.data2 = 0;
-  txMessage_1.frame.data3 = 0;
-  txMessage_1.frame.data4 = 0;
-  txMessage_1.frame.data5 = 0;
-  txMessage_1.frame.data6 = 0;
-  txMessage_1.frame.data7 = 0;
-
-  txMessage_2.frame.idType = dSTANDARD_CAN_MSG_ID_2_0B;
-  txMessage_2.frame.id = 0x0B;
-  txMessage_2.frame.dlc = 8;
-  txMessage_2.frame.data0 = 0;
-  txMessage_2.frame.data1 = 0;
-  txMessage_2.frame.data2 = 0;
-  txMessage_2.frame.data3 = 0;
-  txMessage_2.frame.data4 = 0;
-  txMessage_2.frame.data5 = 0;
-  txMessage_2.frame.data6 = 0;
-  txMessage_2.frame.data7 = 0;
-
-  txMessage_3.frame.idType = dSTANDARD_CAN_MSG_ID_2_0B;
-  txMessage_3.frame.id = 0x0C;
-  txMessage_3.frame.dlc = 8;
-  txMessage_3.frame.data0 = 0;
-  txMessage_3.frame.data1 = 0;
-  txMessage_3.frame.data2 = 0;
-  txMessage_3.frame.data3 = 0;
-  txMessage_3.frame.data4 = 0;
-  txMessage_3.frame.data5 = 0;
-  txMessage_3.frame.data6 = 0;
-  txMessage_3.frame.data7 = 0;
 
   HAL_TIM_Base_Start_IT(&htim2);
 
-  print_to_console(&huart3, "MCU is currently sending data\r\n");
+  printToConsole(&huart3, "MCU is currently sending data\r\n");
 
   /* USER CODE END 2 */
 
@@ -670,88 +627,18 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	//print_to_console(&huart3, "Inside interrupt callback function\r\n");
-	if(CANSPI_Receive(&rxMessage))
-	{
 
-		if (rxMessage.frame.id == 10)
-		{
-			rx_data_buf_1[counter_1][0] = rxMessage.frame.data0;
-			rx_data_buf_1[counter_1][1] = rxMessage.frame.data7;
-			counter_1++;
-		}
-		else if (rxMessage.frame.id == 11)
-		{
-			rx_data_buf_2[counter_2][0] = rxMessage.frame.data0;
-			rx_data_buf_2[counter_2][1] = rxMessage.frame.data7;
-			counter_2++;
-		}
-		else
-		{
-			rx_data_buf_3[counter_3][0] = rxMessage.frame.data0;
-			rx_data_buf_3[counter_3][1] = rxMessage.frame.data7;
-			counter_3++;
-		}
-
-
-		//print_to_console(&huart3, "Data received successfully\r\n");
-	}
-	MCP2515_BitModify(MCP2515_CANINTF, MCP2515_INT_MASK, MCP2515_INT_RESET);
-
-	if (counter_1 > 99 && counter_2 > 99 && counter_3 > 99)
-	{
-		print_to_console(&huart3, "Received 300 CAN Messages.\r\n");
-		start = 2;
-	}
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
 	timer_val = __HAL_TIM_GET_COUNTER(&htim13) - timer_val;
 	timers_arr[sent_counter] = timer_val;
-	if (start == 1)
-	{
-		CANSPI_Transmit(&txMessage_1);
-		CANSPI_Transmit(&txMessage_2);
-		CANSPI_Transmit(&txMessage_3);
 
-		txMessage_1.frame.data0++;
-		txMessage_1.frame.data1++;
-		txMessage_1.frame.data2++;
-		txMessage_1.frame.data3++;
-		txMessage_1.frame.data4++;
-		txMessage_1.frame.data5++;
-		txMessage_1.frame.data6++;
-		txMessage_1.frame.data7++;
-
-		txMessage_2.frame.data0++;
-		txMessage_2.frame.data1++;
-		txMessage_2.frame.data2++;
-		txMessage_2.frame.data3++;
-		txMessage_2.frame.data4++;
-		txMessage_2.frame.data5++;
-		txMessage_2.frame.data6++;
-		txMessage_2.frame.data7++;
-
-		txMessage_3.frame.data0++;
-		txMessage_3.frame.data1++;
-		txMessage_3.frame.data2++;
-		txMessage_3.frame.data3++;
-		txMessage_3.frame.data4++;
-		txMessage_3.frame.data5++;
-		txMessage_3.frame.data6++;
-		txMessage_3.frame.data7++;
-
-		sent_counter++;
-	}
-
-	if (sent_counter > 99)
-	{
-		print_to_console(&huart3, "Timer interrupts terminated");
-		HAL_TIM_Base_Stop_IT(&htim2);
-	}
+	printToConsole(&huart3, "Timer interrupts terminated");
+	HAL_TIM_Base_Stop_IT(&htim2);
 	timer_val = __HAL_TIM_GET_COUNTER(&htim13);
-	//print_to_console(&huart3, "Timer interrupt callback function\r\n");
+
 }
 /* USER CODE END 4 */
 

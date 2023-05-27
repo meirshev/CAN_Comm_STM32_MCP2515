@@ -1,3 +1,22 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file           : CANSPI.h
+  * @brief          : SPI based MCP2515 CAN communications interface.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+
 #ifndef __CAN_SPI_H
 #define	__CAN_SPI_H
 
@@ -6,23 +25,6 @@
 #define true  1
 #define false 0
 typedef int bool;
-
-
-typedef union {
-
-	struct {
-		uint8_t		idType;			// 1 Bytes.
-		uint32_t 	id;				// 4 Bytes.
-		uint8_t 	dlc;			// 1 Bytes.
-		float 		inertia;		// 4 Bytes.
-		float		frequency;		// 4 Bytes.
-		double 		timeStamp;		// 8 Bytes.
-	}frame;
-
-	uint8_t	array[22];
-
-}S_COImessage;
-
 
 typedef union {
   struct {
@@ -41,26 +43,13 @@ typedef union {
   uint8_t array[14];
 } uCAN_MSG;
 
-typedef union {
-  struct {
-    uint8_t idType;
-    uint32_t id;
-    uint8_t dlc;
-    uint8_t data0;
-    uint8_t data1;
-  } frame;
-  uint8_t array[14];	// maybe change that accordingly.
-} uCAN_MSG_2B;
-
 #define dSTANDARD_CAN_MSG_ID_2_0B 1
 #define dEXTENDED_CAN_MSG_ID_2_0B 2
 
-bool CANSPI_Initialize(void);
-void CANSPI_Sleep(void);
+bool 	CANSPI_Initialize(void);
+void 	CANSPI_Sleep(void);
 uint8_t CANSPI_Transmit(uCAN_MSG *tempCanMsg);
-uint8_t CANSPI_Transmit_2B(uCAN_MSG_2B *tempCanMsg);
 uint8_t CANSPI_Receive(uCAN_MSG *tempCanMsg);
-uint8_t CANSPI_Receive_2B(uCAN_MSG_2B *tempCanMsg);
 uint8_t CANSPI_messagesInBuffer(void);
 uint8_t CANSPI_isBussOff(void);
 uint8_t CANSPI_isRxErrorPassive(void);

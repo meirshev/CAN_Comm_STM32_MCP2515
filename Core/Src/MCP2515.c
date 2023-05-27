@@ -1,18 +1,36 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file           : MCP2515.h
+  * @brief          : MCP2515 main instructions interface.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+
 #include "MCP2515.h"
 
 
-/* Pin . Modify below items for your SPI configurations */
+/* NOTICE: Modify below items for your SPI configurations */
 extern SPI_HandleTypeDef        hspi1;
 #define SPI_CAN                 &hspi1
 #define SPI_TIMEOUT             10
-#define MCP2515_CS_HIGH()   HAL_GPIO_WritePin(CAN_CS_GPIO_Port, CAN_CS_Pin, GPIO_PIN_SET)
-#define MCP2515_CS_LOW()    HAL_GPIO_WritePin(CAN_CS_GPIO_Port, CAN_CS_Pin, GPIO_PIN_RESET)
+#define MCP2515_CS_HIGH()   	HAL_GPIO_WritePin(CAN_CS_GPIO_Port, CAN_CS_Pin, GPIO_PIN_SET)
+#define MCP2515_CS_LOW()    	HAL_GPIO_WritePin(CAN_CS_GPIO_Port, CAN_CS_Pin, GPIO_PIN_RESET)
 
 /* Prototypes */
-static void SPI_Tx(uint8_t data);
-static void SPI_TxBuffer(uint8_t *buffer, uint8_t length);
-static uint8_t SPI_Rx(void);
-static void SPI_RxBuffer(uint8_t *buffer, uint8_t length);
+static void 	SPI_Tx(uint8_t data);
+static void 	SPI_TxBuffer(uint8_t *buffer, uint8_t length);
+static uint8_t 	SPI_Rx(void);
+static void 	SPI_RxBuffer(uint8_t *buffer, uint8_t length);
 
 /* MCP2515 Initialization*/
 bool MCP2515_Initialize(void)
@@ -59,8 +77,8 @@ bool MCP2515_SetNormalMode(void)
   
   uint8_t loop = 10;
   
-  do {    
-    /* 모드전환 확인 */    
+  do {
+	/* Read back MCP2515 status */
     if((MCP2515_ReadByte(MCP2515_CANSTAT) & 0xE0) == 0x00)
       return true;
     
@@ -70,16 +88,16 @@ bool MCP2515_SetNormalMode(void)
   return false;
 }
 
-/* MCP2515 를 Sleep 모드로 전환 */
+/* MCP2515 Sleep */
 bool MCP2515_SetSleepMode(void)
 {
-  /* CANCTRL Register Sleep 모드 설정 */  
+  /* CANCTRL Register Sleep */
   MCP2515_WriteByte(MCP2515_CANCTRL, 0x20);
   
   uint8_t loop = 10;
   
   do {    
-    /* 모드전환 확인 */    
+	/* Read back MCP2515 status */
     if((MCP2515_ReadByte(MCP2515_CANSTAT) & 0xE0) == 0x20)
       return true;
     
@@ -99,7 +117,7 @@ void MCP2515_Reset(void)
   MCP2515_CS_HIGH();
 }
 
-/* 1바이트 읽기 */
+/* Read a register from the MCP2515 unit */
 uint8_t MCP2515_ReadByte (uint8_t address)
 {
   uint8_t retVal;
@@ -115,7 +133,7 @@ uint8_t MCP2515_ReadByte (uint8_t address)
   return retVal;
 }
 
-/* Sequential Bytes 읽기 */
+/* Read several registers from the MCP2515 unit */
 void MCP2515_ReadRxSequence(uint8_t instruction, uint8_t *data, uint8_t length)
 {
   MCP2515_CS_LOW();
@@ -126,7 +144,7 @@ void MCP2515_ReadRxSequence(uint8_t instruction, uint8_t *data, uint8_t length)
   MCP2515_CS_HIGH();
 }
 
-/* Write a Single Byte to the MCP2515 */
+/* Write a Single Byte to a registers in the MCP2515 unit */
 void MCP2515_WriteByte(uint8_t address, uint8_t data)
 {    
   MCP2515_CS_LOW();  
@@ -138,7 +156,7 @@ void MCP2515_WriteByte(uint8_t address, uint8_t data)
   MCP2515_CS_HIGH();
 }
 
-/* Sequential Bytes */
+/* Write a sequence of Bytes to registers in the MCP2515 unit */
 void MCP2515_WriteByteSequence(uint8_t startAddress, uint8_t endAddress, uint8_t *data)
 {    
   MCP2515_CS_LOW();
@@ -150,7 +168,7 @@ void MCP2515_WriteByteSequence(uint8_t startAddress, uint8_t endAddress, uint8_t
   MCP2515_CS_HIGH();
 }
 
-/* TxBuffer에 Sequential Bytes 쓰기 */
+/* Load a sequence of TxBuffers in the MCP2515 unit */
 void MCP2515_LoadTxSequence(uint8_t instruction, uint8_t *idReg, uint8_t dlc, uint8_t *data)
 {    
   MCP2515_CS_LOW();
@@ -163,7 +181,7 @@ void MCP2515_LoadTxSequence(uint8_t instruction, uint8_t *idReg, uint8_t dlc, ui
   MCP2515_CS_HIGH();
 }
 
-/* TxBuffer에 1 Bytes 쓰기 */
+/* Load a TxBuffers in the MCP2515 unit */
 void MCP2515_LoadTxBuffer(uint8_t instruction, uint8_t data)
 {
   MCP2515_CS_LOW();
@@ -174,7 +192,7 @@ void MCP2515_LoadTxBuffer(uint8_t instruction, uint8_t data)
   MCP2515_CS_HIGH();
 }
 
-/* RTS 명령을 통해서 TxBuffer 전송 */
+/* Send an instruction to the MCP2515 */
 void MCP2515_RequestToSend(uint8_t instruction)
 {
   MCP2515_CS_LOW();
@@ -184,7 +202,7 @@ void MCP2515_RequestToSend(uint8_t instruction)
   MCP2515_CS_HIGH();
 }
 
-/* MCP2515 Status 확인 */
+/* Read the MCP2515 unit status */
 uint8_t MCP2515_ReadStatus(void)
 {
   uint8_t retVal;
@@ -199,7 +217,7 @@ uint8_t MCP2515_ReadStatus(void)
   return retVal;
 }
 
-/* MCP2515 RxStatus */
+/* Get receive status for the MCP2515 unit */
 uint8_t MCP2515_GetRxStatus(void)
 {
   uint8_t retVal;
@@ -214,7 +232,7 @@ uint8_t MCP2515_GetRxStatus(void)
   return retVal;
 }
 
-
+/* Modify specific bits at a given address in MCP2515 unit*/
 void MCP2515_BitModify(uint8_t address, uint8_t mask, uint8_t data)
 {    
   MCP2515_CS_LOW();
@@ -227,19 +245,19 @@ void MCP2515_BitModify(uint8_t address, uint8_t mask, uint8_t data)
   MCP2515_CS_HIGH();
 }
 
-/* SPI Tx Wrapper 함수 */
+/* SPI Tx Wrapper */
 static void SPI_Tx(uint8_t data)
 {
   HAL_SPI_Transmit(SPI_CAN, &data, 1, SPI_TIMEOUT);    
 }
 
-/* SPI Tx Wrapper 함수 */
+/* SPI Tx Wrapper */
 static void SPI_TxBuffer(uint8_t *buffer, uint8_t length)
 {
   HAL_SPI_Transmit(SPI_CAN, buffer, length, SPI_TIMEOUT);    
 }
 
-/* SPI Rx Wrapper 함수 */
+/* SPI Rx Wrapper */
 static uint8_t SPI_Rx(void)
 {
   uint8_t retVal;
@@ -247,7 +265,7 @@ static uint8_t SPI_Rx(void)
   return retVal;
 }
 
-/* SPI Rx Wrapper 함수 */
+/* SPI Rx Wrapper */
 static void SPI_RxBuffer(uint8_t *buffer, uint8_t length)
 {
   HAL_SPI_Receive(SPI_CAN, buffer, length, SPI_TIMEOUT);

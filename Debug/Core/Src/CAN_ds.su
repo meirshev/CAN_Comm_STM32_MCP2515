@@ -1,0 +1,6 @@
+../Core/Src/CAN_ds.c:23:6:initIDsList	16	static
+../Core/Src/CAN_ds.c:35:6:initQueue	24	static
+../Core/Src/CAN_ds.c:44:6:isQueueEmpty	16	static
+../Core/Src/CAN_ds.c:49:6:isQueueFull	16	static
+../Core/Src/CAN_ds.c:54:6:enqueue	24	static
+../Core/Src/CAN_ds.c:72:6:dequeue	24	static

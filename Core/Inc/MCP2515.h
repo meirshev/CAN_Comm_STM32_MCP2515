@@ -1,7 +1,25 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file           : MCP2515.h
+  * @brief          : MCP2515 main instructions interface.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+
 #ifndef __MCP2515_H
 #define	__MCP2515_H
 
-#pragma anon_unions
+//#pragma anon_unions
 #include "stm32h7xx_hal.h"
 
 #define CAN_CS_Pin GPIO_PIN_4
@@ -64,8 +82,8 @@ typedef int bool;
 #define MCP2515_RXF5SIDL	0x19
 #define MCP2515_RXF5EID8	0x1A
 #define MCP2515_RXF5EID0	0x1B
-#define MCP2515_TEC		0x1C
-#define MCP2515_REC		0x1D
+#define MCP2515_TEC			0x1C
+#define MCP2515_REC			0x1D
 
 #define MCP2515_RXM0SIDH	0x20
 #define MCP2515_RXM0SIDL	0x21
@@ -99,6 +117,7 @@ typedef int bool;
 #define MSG_IN_RXB1             0x02
 #define MSG_IN_BOTH_BUFFERS     0x03
 
+/* Contrl status register */
 typedef union{
   struct{
     unsigned RX0IF      : 1;
@@ -113,6 +132,7 @@ typedef union{
   uint8_t ctrl_status;  
 }ctrl_status_t;
 
+/* Control receive register status */
 typedef union{
   struct{
     unsigned filter     : 3;
@@ -123,6 +143,7 @@ typedef union{
   uint8_t ctrl_rx_status;
 }ctrl_rx_status_t;
 
+/* Error flag register */
 typedef union{
   struct{
     unsigned EWARN      :1;
@@ -137,6 +158,7 @@ typedef union{
   uint8_t error_flag_reg;
 }ctrl_error_status_t;
 
+/* received message register */
 typedef union{
   struct{
     uint8_t RXBnSIDH;
@@ -156,20 +178,8 @@ typedef union{
   uint8_t rx_reg_array[13];
 }rx_reg_t;
 
-typedef union{
-  struct{
-    uint8_t RXBnSIDH;
-    uint8_t RXBnSIDL;
-    uint8_t RXBnEID8;
-    uint8_t RXBnEID0;
-    uint8_t RXBnDLC;
-    uint8_t RXBnD0;
-    uint8_t RXBnD1;
-  };
-  uint8_t rx_reg_array[7];
-}rx_reg_t_2B;
 
-/* MCP2515 Registers */
+/* MCP2515 Filter Registers */
 typedef struct{
   uint8_t RXF0SIDH;
   uint8_t RXF0SIDL;
@@ -234,20 +244,20 @@ typedef struct{
 }id_reg_t;
 
 /* Functions */
-bool MCP2515_Initialize(void);
-bool MCP2515_SetConfigMode(void);
-bool MCP2515_SetNormalMode(void);
-bool MCP2515_SetSleepMode(void);
-void MCP2515_Reset(void);
+bool 	MCP2515_Initialize(void);
+bool 	MCP2515_SetConfigMode(void);
+bool 	MCP2515_SetNormalMode(void);
+bool 	MCP2515_SetSleepMode(void);
+void 	MCP2515_Reset(void);
 uint8_t MCP2515_ReadByte (uint8_t address);
-void MCP2515_ReadRxSequence(uint8_t instruction, uint8_t *data, uint8_t length);
-void MCP2515_WriteByte(uint8_t address, uint8_t data);
-void MCP2515_WriteByteSequence(uint8_t startAddress, uint8_t endAddress, uint8_t *data);
-void MCP2515_LoadTxSequence(uint8_t instruction, uint8_t *idReg, uint8_t dlc, uint8_t *data);
-void MCP2515_LoadTxBuffer(uint8_t instruction, uint8_t data);
-void MCP2515_RequestToSend(uint8_t instruction);
+void 	MCP2515_ReadRxSequence(uint8_t instruction, uint8_t *data, uint8_t length);
+void 	MCP2515_WriteByte(uint8_t address, uint8_t data);
+void 	MCP2515_WriteByteSequence(uint8_t startAddress, uint8_t endAddress, uint8_t *data);
+void 	MCP2515_LoadTxSequence(uint8_t instruction, uint8_t *idReg, uint8_t dlc, uint8_t *data);
+void 	MCP2515_LoadTxBuffer(uint8_t instruction, uint8_t data);
+void 	MCP2515_RequestToSend(uint8_t instruction);
 uint8_t MCP2515_ReadStatus(void);
 uint8_t MCP2515_GetRxStatus(void);
-void MCP2515_BitModify(uint8_t address, uint8_t mask, uint8_t data);
+void 	MCP2515_BitModify(uint8_t address, uint8_t mask, uint8_t data);
 
 #endif
