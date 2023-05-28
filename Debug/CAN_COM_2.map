@@ -414,7 +414,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x1e4 ./Core/Src/CAN_comm.o
  .debug_macro   0x0000000000000000       0x1c ./Core/Src/CAN_comm.o
  .debug_macro   0x0000000000000000       0x1c ./Core/Src/CAN_comm.o
- .debug_line    0x0000000000000000      0xa5d ./Core/Src/CAN_comm.o
+ .debug_line    0x0000000000000000      0xa60 ./Core/Src/CAN_comm.o
  .debug_str     0x0000000000000000   0x166731 ./Core/Src/CAN_comm.o
  .comment       0x0000000000000000       0x51 ./Core/Src/CAN_comm.o
  .debug_frame   0x0000000000000000      0x134 ./Core/Src/CAN_comm.o

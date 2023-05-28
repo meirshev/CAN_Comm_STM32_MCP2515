@@ -52,7 +52,7 @@ CAN_HNDL	initCANComm();
 void 		loop();
 int 		sendDataManager(CAN_HNDL hndl, S_COImessage* msg);
 int 		readNextMsg(CAN_HNDL hndl, S_COImessage* msg);
-bool		configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll);
+uint8_t		configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll);
 
 /* Private Functions Prototypes */
 void 	_sendCANMsg(S_COImessage* msg);

@@ -45,6 +45,8 @@ int sendDataManager(CAN_HNDL hndl, S_COImessage* msg)
 	}
 
 	_sendCANMsg(msgToSend);
+
+	return 1;
 }
 
 void loop()
@@ -64,7 +66,7 @@ int readNextMsg(CAN_HNDL hndl, S_COImessage* msg)
 	return 1;
 }
 
-bool configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll)
+uint8_t configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll)
 {
 
 	uint8_t mask 	= 0x00;
@@ -149,11 +151,11 @@ bool configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll)
 
 	if (CANSPI_Initialize(&filters))
 	{
-		return true;
+		return 1;
 	}
 	else
 	{
-		return false;
+		return 0;
 	}
 
 }
