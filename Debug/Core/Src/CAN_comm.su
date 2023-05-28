@@ -2,7 +2,7 @@
 ../Core/Src/CAN_comm.c:33:5:sendDataManager	24	static
 ../Core/Src/CAN_comm.c:50:6:loop	4	static
 ../Core/Src/CAN_comm.c:55:5:readNextMsg	16	static
-../Core/Src/CAN_comm.c:67:5:configID	24	static
-../Core/Src/CAN_comm.c:72:6:_addToRecvQ	16	static
-../Core/Src/CAN_comm.c:77:6:_convertToCANFormat	16	static
-../Core/Src/CAN_comm.c:82:6:_sendCANMsg	16	static
+../Core/Src/CAN_comm.c:67:6:configID	32	static
+../Core/Src/CAN_comm.c:161:6:_addToRecvQ	16	static
+../Core/Src/CAN_comm.c:166:6:_convertToCANFormat	16	static
+../Core/Src/CAN_comm.c:171:7:_sendCANMsg	16	static

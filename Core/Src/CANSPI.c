@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 
 #include "CANSPI.h"
-#include "MCP2515.h"
 
 /** Local Functions Prototypes */
 static uint32_t convertReg2ExtendedCANid(uint8_t tempRXBn_EIDH, uint8_t tempRXBn_EIDL, uint8_t tempRXBn_SIDH, uint8_t tempRXBn_SIDL);
@@ -45,58 +44,8 @@ void CANSPI_Sleep(void)
 }
 
 /* CAN */
-bool CANSPI_Initialize(void)
+bool CANSPI_Initialize(CAN_filters* filters)
 {
-  RXF0 RXF0reg;
-  RXF1 RXF1reg;
-  RXF2 RXF2reg;
-  RXF3 RXF3reg;
-  RXF4 RXF4reg;
-  RXF5 RXF5reg;
-  RXM0 RXM0reg;
-  RXM1 RXM1reg;
-      
-  /* Rx Mask values */
-  RXM0reg.RXM0SIDH = 0x00;
-  RXM0reg.RXM0SIDL = 0x00;
-  RXM0reg.RXM0EID8 = 0x00;
-  RXM0reg.RXM0EID0 = 0x00;
-  
-  RXM1reg.RXM1SIDH = 0x00;
-  RXM1reg.RXM1SIDL = 0x00;
-  RXM1reg.RXM1EID8 = 0x00;
-  RXM1reg.RXM1EID0 = 0x00;
-  
-  /* Rx Filter values */
-  RXF0reg.RXF0SIDH = 0x00;      
-  RXF0reg.RXF0SIDL = 0x00;
-  RXF0reg.RXF0EID8 = 0x00;
-  RXF0reg.RXF0EID0 = 0x00;
-  
-  RXF1reg.RXF1SIDH = 0x00;
-  RXF1reg.RXF1SIDL = 0x08;
-  RXF1reg.RXF1EID8 = 0x00;
-  RXF1reg.RXF1EID0 = 0x00;
-  
-  RXF2reg.RXF2SIDH = 0x00;
-  RXF2reg.RXF2SIDL = 0x00;
-  RXF2reg.RXF2EID8 = 0x00;
-  RXF2reg.RXF2EID0 = 0x00;
-  
-  RXF3reg.RXF3SIDH = 0x00;
-  RXF3reg.RXF3SIDL = 0x00;
-  RXF3reg.RXF3EID8 = 0x00;
-  RXF3reg.RXF3EID0 = 0x00;
-  
-  RXF4reg.RXF4SIDH = 0x00;
-  RXF4reg.RXF4SIDL = 0x00;
-  RXF4reg.RXF4EID8 = 0x00;
-  RXF4reg.RXF4EID0 = 0x00;
-  
-  RXF5reg.RXF5SIDH = 0x00;
-  RXF5reg.RXF5SIDL = 0x08;
-  RXF5reg.RXF5EID8 = 0x00;
-  RXF5reg.RXF5EID0 = 0x00;
   
   /* MCP2515, SPI */
   if(!MCP2515_Initialize())
@@ -107,14 +56,14 @@ bool CANSPI_Initialize(void)
     return false;
   
   /* Configure Filters & Masks */
-  MCP2515_WriteByteSequence(MCP2515_RXM0SIDH, MCP2515_RXM0EID0, &(RXM0reg.RXM0SIDH));
-  MCP2515_WriteByteSequence(MCP2515_RXM1SIDH, MCP2515_RXM1EID0, &(RXM1reg.RXM1SIDH));
-  MCP2515_WriteByteSequence(MCP2515_RXF0SIDH, MCP2515_RXF0EID0, &(RXF0reg.RXF0SIDH));
-  MCP2515_WriteByteSequence(MCP2515_RXF1SIDH, MCP2515_RXF1EID0, &(RXF1reg.RXF1SIDH));
-  MCP2515_WriteByteSequence(MCP2515_RXF2SIDH, MCP2515_RXF2EID0, &(RXF2reg.RXF2SIDH));
-  MCP2515_WriteByteSequence(MCP2515_RXF3SIDH, MCP2515_RXF3EID0, &(RXF3reg.RXF3SIDH));
-  MCP2515_WriteByteSequence(MCP2515_RXF4SIDH, MCP2515_RXF4EID0, &(RXF4reg.RXF4SIDH));
-  MCP2515_WriteByteSequence(MCP2515_RXF5SIDH, MCP2515_RXF5EID0, &(RXF5reg.RXF5SIDH));
+  MCP2515_WriteByteSequence(MCP2515_RXM0SIDH, MCP2515_RXM0EID0, &(filters->RXM0reg.RXM0SIDH));
+  MCP2515_WriteByteSequence(MCP2515_RXM1SIDH, MCP2515_RXM1EID0, &(filters->RXM1reg.RXM1SIDH));
+  MCP2515_WriteByteSequence(MCP2515_RXF0SIDH, MCP2515_RXF0EID0, &(filters->RXF0reg.RXF0SIDH));
+  MCP2515_WriteByteSequence(MCP2515_RXF1SIDH, MCP2515_RXF1EID0, &(filters->RXF1reg.RXF1SIDH));
+  MCP2515_WriteByteSequence(MCP2515_RXF2SIDH, MCP2515_RXF2EID0, &(filters->RXF2reg.RXF2SIDH));
+  MCP2515_WriteByteSequence(MCP2515_RXF3SIDH, MCP2515_RXF3EID0, &(filters->RXF3reg.RXF3SIDH));
+  MCP2515_WriteByteSequence(MCP2515_RXF4SIDH, MCP2515_RXF4EID0, &(filters->RXF4reg.RXF4SIDH));
+  MCP2515_WriteByteSequence(MCP2515_RXF5SIDH, MCP2515_RXF5EID0, &(filters->RXF5reg.RXF5SIDH));
   
   /* Accept All (Standard + Extended) */
   MCP2515_WriteByte(MCP2515_RXB0CTRL, 0x04);    //Enable BUKT, Accept Filter 0

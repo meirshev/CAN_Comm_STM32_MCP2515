@@ -20,16 +20,14 @@
 
 #include <CAN_ds.h>
 
-void initIDsList(IDs* ids)
+void initCommConfig(CommConfig* nodes, uint8_t* selfID)
 {
-	ids->selfID = -1;
+	*selfID = NO_ID;
 
-	ids->id0 = -1;
-	ids->id1 = -1;
-	ids->id2 = -1;
-	ids->id3 = -1;
-	ids->id4 = -1;
-	ids->id5 = -1;
+	for (int i=0; i < NUM_OF_NODES; i++)
+	{
+		nodes->commNodes[i] = false;
+	}
 }
 
 void initQueue(Queue* q, S_COImessage* data_arr, uint8_t size)
@@ -76,7 +74,7 @@ void dequeue(Queue* q, S_COImessage* msg)
         return;
     }
 
-    S_COImessage* dequeuedElement = &q->data[q->front];
+    msg = &q->data[q->front];
 
     if (q->front == q->rear) {
         q->front = -1;
@@ -85,5 +83,4 @@ void dequeue(Queue* q, S_COImessage* msg)
         q->front = (q->front + 1) % q->QSize;
     }
 
-    msg = dequeuedElement;
 }

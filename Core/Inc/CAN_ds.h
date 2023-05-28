@@ -23,10 +23,27 @@
 
 #include "stm32h7xx_hal.h"
 
+
+
+#define NUM_OF_NODES 6
+
 #define true 	1
 #define false 	0
 
 typedef int bool;
+
+enum NODE_IDS{
+
+	NODE_O_ID 	= 0x01,		// ID: 00000001
+	NODE_1_ID 	= 0x02,		// ID: 00000010
+	NODE_2_ID 	= 0x04,		// ID: 00000100
+	NODE_3_ID 	= 0x08,		// ID: 00001000
+	NODE_4_ID 	= 0x10,		// ID: 00010000
+	NODE_5_ID 	= 0x20,		// ID: 00100000
+	NODE_6_ID 	= 0x40,		// ID: 01000000
+
+	NO_ID 	= -1
+};
 
 typedef struct{
 
@@ -36,33 +53,13 @@ typedef struct{
 
 }S_COImessage;
 
-enum IDS{
-
-	CENTERAL_NODE	= 0,
-	NODE_1 			= 1,
-	NODE_2			= 2,
-	NODE_3			= 3,
-	NODE_4			= 4,
-	NODE_5			= 5,
-	NODE_6			= 6
-
-};
-
 typedef struct{
 
-	uint8_t selfID;
+	bool commNodes[NUM_OF_NODES];
 
-	uint8_t id0;
-	uint8_t id1;
-	uint8_t id2;
-	uint8_t id3;
-	uint8_t id4;
-	uint8_t id5;
+}CommConfig;
 
-}IDs;
-
-
-typedef struct {
+typedef struct{
 	S_COImessage 	*data;
 	uint8_t		 	QSize;
     int 			front;
@@ -70,7 +67,7 @@ typedef struct {
 } Queue;
 
 
-void 			initIDsList(IDs* ids);
+void 			initCommConfig(CommConfig* nodes, uint8_t* selfID);
 void 			initQueue(Queue* q, S_COImessage* data_arr, uint8_t size);
 void			enqueue(Queue* q, S_COImessage* element);
 void 			dequeue(Queue* q, S_COImessage* msg);

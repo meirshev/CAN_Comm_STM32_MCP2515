@@ -21,6 +21,7 @@
 #define	__CAN_SPI_H
 
 #include "stm32h7xx_hal.h"
+#include "MCP2515.h"
 
 #define true  1
 #define false 0
@@ -46,7 +47,7 @@ typedef union {
 #define dSTANDARD_CAN_MSG_ID_2_0B 1
 #define dEXTENDED_CAN_MSG_ID_2_0B 2
 
-bool 	CANSPI_Initialize(void);
+bool 	CANSPI_Initialize(CAN_filters* filters);
 void 	CANSPI_Sleep(void);
 uint8_t CANSPI_Transmit(uCAN_MSG *tempCanMsg);
 uint8_t CANSPI_Receive(uCAN_MSG *tempCanMsg);

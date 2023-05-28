@@ -243,6 +243,17 @@ typedef struct{
   uint8_t tempEID0;
 }id_reg_t;
 
+typedef struct{
+	RXF0 RXF0reg;
+	RXF1 RXF1reg;
+	RXF2 RXF2reg;
+	RXF3 RXF3reg;
+	RXF4 RXF4reg;
+	RXF5 RXF5reg;
+	RXM0 RXM0reg;
+	RXM1 RXM1reg;
+}CAN_filters;
+
 /* Functions */
 bool 	MCP2515_Initialize(void);
 bool 	MCP2515_SetConfigMode(void);

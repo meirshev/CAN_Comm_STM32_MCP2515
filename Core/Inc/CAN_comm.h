@@ -20,7 +20,9 @@
 #ifndef INC_CAN_COMM_H_
 #define INC_CAN_COMM_H_
 
-#include <CAN_ds.h>
+#include "CAN_ds.h"
+#include "CANSPI.h"
+#include "MCP2515.h"
 #include "stm32h7xx_hal.h"
 
 #define SEND_QUEUE_SIZE 	1
@@ -32,9 +34,9 @@
 typedef int bool;
 
 typedef struct{
-	Queue 	sendQ;
-	Queue 	recvQ;
-	IDs 	idsList;
+	Queue 		sendQ;
+	Queue 		recvQ;
+	CommConfig 	idsList;
 }CAN_data;
 
 typedef CAN_data* CAN_HNDL;
@@ -42,19 +44,18 @@ typedef CAN_data* CAN_HNDL;
 CAN_data 		_cData;
 S_COImessage	sendQ[SEND_QUEUE_SIZE];
 S_COImessage	recvQ[RECEIVE_QUEUE_SIZE];
-
+CAN_filters		filters;
+uint8_t 		selfID;
 
 /* Public Functions Prototypes */
 CAN_HNDL	initCANComm();
 void 		loop();
 int 		sendDataManager(CAN_HNDL hndl, S_COImessage* msg);
 int 		readNextMsg(CAN_HNDL hndl, S_COImessage* msg);
-int			configID(CAN_HNDL hndl, uint8_t id, IDs* idsList, bool listenToAll);
+bool		configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll);
 
 /* Private Functions Prototypes */
-void _sendCANMsg(S_COImessage* msg);
-void _addToSendQ(CAN_HNDL hndl, S_COImessage* msg);
-void _addToRecvQ(CAN_HNDL hndl, S_COImessage* msg);
-void _convertToCANFormat(S_COImessage* msg);
+void 	_sendCANMsg(S_COImessage* msg);
+void 	_convertToCANFormat(S_COImessage* msg);
 
 #endif /* INC_CAN_COMM_H_ */
