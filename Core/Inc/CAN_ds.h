@@ -45,13 +45,16 @@ enum NODE_IDS{
 	NO_ID 	= -1
 };
 
-typedef struct{
-
-	uint32_t 	timeStamp;
-	float 		J;
-	float		omega;
+typedef union{
+	struct{
+		uint32_t 	timeStamp;
+		float 		J;
+		float		omega;
+	}params;
+	uint8_t _data[12];
 
 }S_COImessage;
+
 
 typedef struct{
 
@@ -60,7 +63,7 @@ typedef struct{
 }CommConfig;
 
 typedef struct{
-	S_COImessage 	*data;
+	S_COImessage 	*msgsArr;
 	uint8_t		 	QSize;
     int 			front;
     int 			rear;
@@ -68,9 +71,9 @@ typedef struct{
 
 
 void 			initCommConfig(CommConfig* nodes, uint8_t* selfID);
-void 			initQueue(Queue* q, S_COImessage* data_arr, uint8_t size);
+void 			initQueue(Queue* q, S_COImessage* msgsArr, uint8_t size);
 void			enqueue(Queue* q, S_COImessage* element);
-void 			dequeue(Queue* q, S_COImessage* msg);
+int 			dequeue(Queue* q, S_COImessage* msg);
 bool 			isQueueEmpty(Queue* q);
 bool 			isQueueFull(Queue* q);
 

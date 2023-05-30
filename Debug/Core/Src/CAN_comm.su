@@ -1,8 +1,9 @@
 ../Core/Src/CAN_comm.c:23:10:initCANComm	8	static
-../Core/Src/CAN_comm.c:33:5:sendDataManager	24	static
-../Core/Src/CAN_comm.c:52:6:loop	4	static
-../Core/Src/CAN_comm.c:57:5:readNextMsg	16	static
-../Core/Src/CAN_comm.c:69:9:configID	32	static
-../Core/Src/CAN_comm.c:163:6:_addToRecvQ	16	static
-../Core/Src/CAN_comm.c:168:6:_convertToCANFormat	16	static
-../Core/Src/CAN_comm.c:173:7:_sendCANMsg	16	static
+../Core/Src/CAN_comm.c:33:5:sendDataManager	32	static
+../Core/Src/CAN_comm.c:51:6:loop	104	static
+../Core/Src/CAN_comm.c:76:5:readNextMsg	16	static
+../Core/Src/CAN_comm.c:88:9:configID	32	static
+../Core/Src/CAN_comm.c:182:6:_sendCANMsg	16	static
+../Core/Src/CAN_comm.c:192:6:_recvCANMsg	16	static
+../Core/Src/CAN_comm.c:197:6:_encodeCANMsg	24	static
+../Core/Src/CAN_comm.c:228:6:_decodeCANMsg	16	static

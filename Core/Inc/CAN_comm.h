@@ -30,6 +30,7 @@
 
 #define true 	1
 #define false 	0
+#define not 	!
 
 typedef int bool;
 
@@ -42,20 +43,21 @@ typedef struct{
 typedef CAN_data* CAN_HNDL;
 
 CAN_data 		_cData;
-S_COImessage	sendQ[SEND_QUEUE_SIZE];
-S_COImessage	recvQ[RECEIVE_QUEUE_SIZE];
+S_COImessage	sendMsgsArr[SEND_QUEUE_SIZE];
+S_COImessage	recvMsgsArr[RECEIVE_QUEUE_SIZE];
 CAN_filters		filters;
-uint8_t 		selfID;
+uint8_t 		selfID;		// should be set only from the NODE_IDS Enum.
 
 /* Public Functions Prototypes */
 CAN_HNDL	initCANComm();
-void 		loop();
+void 		loop(CAN_HNDL hndl);
 int 		sendDataManager(CAN_HNDL hndl, S_COImessage* msg);
 int 		readNextMsg(CAN_HNDL hndl, S_COImessage* msg);
 uint8_t		configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll);
 
 /* Private Functions Prototypes */
-void 	_sendCANMsg(S_COImessage* msg);
-void 	_convertToCANFormat(S_COImessage* msg);
-
+void 		_sendCANMsg(S_COImessage* msg);
+void 		_recvCANMsg(S_COImessage* msg);
+void 		_encodeCANMsg(S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2);
+void 		_decodeCANMsg(uCAN_MSG *cMsg, S_COImessage* msg);
 #endif /* INC_CAN_COMM_H_ */

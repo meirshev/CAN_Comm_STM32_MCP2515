@@ -30,10 +30,10 @@ void initCommConfig(CommConfig* nodes, uint8_t* selfID)
 	}
 }
 
-void initQueue(Queue* q, S_COImessage* data_arr, uint8_t size)
+void initQueue(Queue* q, S_COImessage* msgsArr, uint8_t size)
 {
 	q->QSize 	= size;
-	q->data 	= data_arr;
+	q->msgsArr 	= msgsArr;
     q->front 	= -1;
     q->rear 	= -1;
 }
@@ -53,28 +53,32 @@ void enqueue(Queue* q, S_COImessage* element)
 {
 
     if (isQueueFull(q)) {
-    	S_COImessage* _;
+    	S_COImessage* _ = NULL;
     	dequeue(q, _);
     }
 
-    if (isQEmpty(q)) {
+    if (isQueueEmpty(q)) {
         q->front = 0;
         q->rear = 0;
     } else {
         q->rear = (q->rear + 1) % q->QSize;
     }
 
-    q->data[q->rear] = *element;
+    q->msgsArr[q->rear].params.timeStamp 	= element->params.timeStamp;
+    q->msgsArr[q->rear].params.J 			= element->params.J;
+    q->msgsArr[q->rear].params.omega 		= element->params.omega;
 }
 
-void dequeue(Queue* q, S_COImessage* msg)
+int dequeue(Queue* q, S_COImessage* msg)
 {
 
-    if (isQEmpty(q)) {
-        return;
+    if (isQueueEmpty(q)) {
+        return 0;
     }
 
-    msg = &q->data[q->front];
+    msg->params.timeStamp 	= q->msgsArr[q->front].params.timeStamp;
+    msg->params.J 			= q->msgsArr[q->front].params.J;
+    msg->params.omega 		= q->msgsArr[q->front].params.omega;
 
     if (q->front == q->rear) {
         q->front = -1;
@@ -83,4 +87,5 @@ void dequeue(Queue* q, S_COImessage* msg)
         q->front = (q->front + 1) % q->QSize;
     }
 
+    return 1;
 }

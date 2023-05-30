@@ -3,4 +3,4 @@
 ../Core/Src/CAN_ds.c:42:6:isQueueEmpty	16	static
 ../Core/Src/CAN_ds.c:47:6:isQueueFull	16	static
 ../Core/Src/CAN_ds.c:52:6:enqueue	24	static
-../Core/Src/CAN_ds.c:70:6:dequeue	16	static
+../Core/Src/CAN_ds.c:72:5:dequeue	16	static

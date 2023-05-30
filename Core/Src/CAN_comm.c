@@ -22,8 +22,8 @@
 
 CAN_HNDL initCANComm()
 {
-	initQueue(&_cData.sendQ, sendQ, SEND_QUEUE_SIZE);
-	initQueue(&_cData.recvQ, recvQ, RECEIVE_QUEUE_SIZE);
+	initQueue(&_cData.sendQ, sendMsgsArr, SEND_QUEUE_SIZE);
+	initQueue(&_cData.recvQ, recvMsgsArr, RECEIVE_QUEUE_SIZE);
 	initCommConfig(&_cData.idsList, &selfID);
 
 	return &_cData;
@@ -32,26 +32,45 @@ CAN_HNDL initCANComm()
 
 int sendDataManager(CAN_HNDL hndl, S_COImessage* msg)
 {
-	S_COImessage* msgToSend;
 
 	if (isQueueEmpty(&hndl->sendQ))
 	{
-		msgToSend = msg;
+		_sendCANMsg(msg);
 	}
 	else
 	{
-		dequeue(&hndl->sendQ, msgToSend);
+		S_COImessage buffMsg;
+		dequeue(&hndl->sendQ, &buffMsg);
 		enqueue(&hndl->sendQ, msg);
+		_sendCANMsg(msg);
 	}
 
-	_sendCANMsg(msgToSend);
-
-	return 1;
+	return 1;		// not yet fully configured - need to decided what to do with the return value of CANSPI_Transmit() func.
 }
 
-void loop()
+void loop(CAN_HNDL hndl)
 {
 
+	uCAN_MSG rxMsg;
+
+	if(CANSPI_Receive(&rxMsg))
+	{
+		S_COImessage recvMsg;
+		_decodeCANMsg(&rxMsg, &recvMsg);
+		enqueue(&hndl->recvQ, &recvMsg);
+	}
+
+	S_COImessage sendMsg;
+
+	if (dequeue(&hndl->sendQ, &sendMsg))
+	{
+		uCAN_MSG cMsg_1;
+		uCAN_MSG cMsg_2;
+
+		_encodeCANMsg(&sendMsg, &cMsg_1, &cMsg_2);
+		CANSPI_Transmit(&cMsg_1);
+		CANSPI_Transmit(&cMsg_2);
+	}
 }
 
 int readNextMsg(CAN_HNDL hndl, S_COImessage* msg)
@@ -69,9 +88,9 @@ int readNextMsg(CAN_HNDL hndl, S_COImessage* msg)
 uint8_t configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll)
 {
 
-	uint8_t mask 	= 0x00;
+	uint8_t mask = 0x00;
 
-	if (!listenToAll)
+	if (not listenToAll)
 	{
 		for(int id_x=0; id_x<NUM_OF_NODES; id_x++)
 		{
@@ -160,17 +179,53 @@ uint8_t configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToA
 
 }
 
-void _addToRecvQ(CAN_HNDL hndl, S_COImessage* msg)
+void _sendCANMsg(S_COImessage* msg)
+{
+
+//	uCAN_MSG sendMsg_1;
+//	uCAN_MSG sendMsg_2;
+
+
+//	CANSPI_Transmit();
+}
+
+void _recvCANMsg(S_COImessage* msg)
 {
 
 }
 
-void _convertToCANFormat(S_COImessage* msg)
+void _encodeCANMsg(S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2)
 {
+	cMsg_1->frame.idType = dSTANDARD_CAN_MSG_ID_2_0B;
+	cMsg_1->frame.id = selfID;
+	cMsg_1->frame.dlc = 8;				// message size - 8 bytes.
 
+	cMsg_1->frame.data0 = msg->_data[0];	// timestamp param
+	cMsg_1->frame.data1 = msg->_data[1];	// timestamp param
+	cMsg_1->frame.data2 = msg->_data[2];	// timestamp param
+	cMsg_1->frame.data3 = msg->_data[3];	// timestamp param
+
+	cMsg_1->frame.data4 = msg->_data[4];	// J param
+	cMsg_1->frame.data5 = msg->_data[5];	// J param
+	cMsg_1->frame.data6 = msg->_data[6];	// J param
+	cMsg_1->frame.data7 = msg->_data[7];	// J param
+
+	cMsg_2->frame.idType = dSTANDARD_CAN_MSG_ID_2_0B;
+	cMsg_2->frame.id = selfID;
+	cMsg_2->frame.dlc = 8;				// message size - 8 bytes.
+
+	cMsg_2->frame.data0 = msg->_data[0];	// timestamp param
+	cMsg_2->frame.data1 = msg->_data[1];	// timestamp param
+	cMsg_2->frame.data2 = msg->_data[2];	// timestamp param
+	cMsg_2->frame.data3 = msg->_data[3];	// timestamp param
+
+	cMsg_2->frame.data4 = msg->_data[4];	// omega param
+	cMsg_2->frame.data5 = msg->_data[5];	// omega param
+	cMsg_2->frame.data6 = msg->_data[6];	// omega param
+	cMsg_2->frame.data7 = msg->_data[7];	// omega param
 }
 
-void 	_sendCANMsg(S_COImessage* msg)
+void _decodeCANMsg(uCAN_MSG *cMsg, S_COImessage* msg)
 {
 
 }
