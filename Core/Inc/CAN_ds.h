@@ -42,7 +42,7 @@ enum NODE_IDS{
 	NODE_5_ID 	= 0x20,		// ID: 00100000
 	NODE_6_ID 	= 0x40,		// ID: 01000000
 
-	NO_ID 	= -1
+	NO_ID 		= -1		// For safety check-ups - need to implement in the future.
 };
 
 typedef union{

@@ -49,6 +49,15 @@ bool isQueueFull(Queue* q)
     return ((q->rear + 1) % q->QSize == q->front);
 }
 
+/**
+ * @Brief description of the function.
+ *
+ * Detailed description of the function and its purpose.
+ *
+ * @param q
+ * @param element this argument is deep copied into memory in the heap.
+ * @return
+ */
 void enqueue(Queue* q, S_COImessage* element)
 {
 

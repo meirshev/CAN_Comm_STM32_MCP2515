@@ -2,7 +2,7 @@
 /**
   ******************************************************************************
   * @file           : CAN_comm.h
-  * @brief          : CAN communication api.
+  * @brief          : CAN communication User API.
   ******************************************************************************
   * @attention
   *
@@ -32,12 +32,20 @@
 #define false 	0
 #define not 	!
 
+#define MSG_PART_1(id) (0x00 | id)
+#define MSG_PART_2(id) (0x80 | id)
+
 typedef int bool;
 
+/*
+ * Contains all the relevant data for supporting the
+ * app CAN communication requirements.
+ * */
 typedef struct{
 	Queue 		sendQ;
 	Queue 		recvQ;
 	CommConfig 	idsList;
+	uint8_t 	selfID;
 }CAN_data;
 
 typedef CAN_data* CAN_HNDL;
@@ -46,7 +54,7 @@ CAN_data 		_cData;
 S_COImessage	sendMsgsArr[SEND_QUEUE_SIZE];
 S_COImessage	recvMsgsArr[RECEIVE_QUEUE_SIZE];
 CAN_filters		filters;
-uint8_t 		selfID;		// should be set only from the NODE_IDS Enum.
+		// should be set only from the NODE_IDS Enum.
 
 /* Public Functions Prototypes */
 CAN_HNDL	initCANComm();
@@ -56,8 +64,8 @@ int 		readNextMsg(CAN_HNDL hndl, S_COImessage* msg);
 uint8_t		configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll);
 
 /* Private Functions Prototypes */
-void 		_sendCANMsg(S_COImessage* msg);
-void 		_recvCANMsg(S_COImessage* msg);
-void 		_encodeCANMsg(S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2);
+void 		_sendCANMsg(CAN_HNDL hndl, S_COImessage* msg);
+void 		_recvCANMsg(CAN_HNDL hndl,uCAN_MSG *CANMsg);
+void 		_encodeCANMsg(CAN_HNDL hndl, S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2);
 void 		_decodeCANMsg(uCAN_MSG *cMsg, S_COImessage* msg);
 #endif /* INC_CAN_COMM_H_ */

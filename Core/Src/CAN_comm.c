@@ -19,60 +19,83 @@
 
 #include "CAN_comm.h"
 
-
+/**
+ * @brief Initializes the CAN communication module.
+ *
+ * This function initializes the CAN communication module by initializing
+ * the send and receive queues, as well as the communication configuration
+ * including the ID list and the self ID.
+ *
+ * @return A pointer to a CAN communication handle.
+ */
 CAN_HNDL initCANComm()
 {
 	initQueue(&_cData.sendQ, sendMsgsArr, SEND_QUEUE_SIZE);
 	initQueue(&_cData.recvQ, recvMsgsArr, RECEIVE_QUEUE_SIZE);
-	initCommConfig(&_cData.idsList, &selfID);
+	initCommConfig(&_cData.idsList, &_cData.selfID);
 
 	return &_cData;
 }
 
-
+/**
+ * @brief Attempts to send the next in queue CAN message if possible.
+ *
+ * This function first checks the queue of CAN messages to send and tries
+ * to send the next message in the queue. If the queue is empty, it tries
+ * to send the current message directly.
+ *
+ *
+ * @return 1 if a message was sent, 0 otherwise. */
 int sendDataManager(CAN_HNDL hndl, S_COImessage* msg)
 {
 
 	if (isQueueEmpty(&hndl->sendQ))
 	{
-		_sendCANMsg(msg);
+		_sendCANMsg(hndl, msg);
 	}
 	else
 	{
 		S_COImessage buffMsg;
 		dequeue(&hndl->sendQ, &buffMsg);
 		enqueue(&hndl->sendQ, msg);
-		_sendCANMsg(msg);
+		_sendCANMsg(hndl, msg);
 	}
 
-	return 1;		// not yet fully configured - need to decided what to do with the return value of CANSPI_Transmit() func.
+	return 1;		// not yet fully configured - need to decide what to do with the return value of CANSPI_Transmit() func.
 }
 
+/**
+ * @brief Attempts to send a CAN message and receive incoming CAN messages.
+ *
+ * This function first tries to send the next message in the send messages
+ * queue. Then it tries to read a pending message from the MCP1515 module.
+ *
+ * */
 void loop(CAN_HNDL hndl)
 {
+	S_COImessage sendMsg;
+
+	if (dequeue(&hndl->sendQ, &sendMsg))
+	{
+		_sendCANMsg(hndl, &sendMsg);
+	}
 
 	uCAN_MSG rxMsg;
 
 	if(CANSPI_Receive(&rxMsg))
 	{
-		S_COImessage recvMsg;
-		_decodeCANMsg(&rxMsg, &recvMsg);
-		enqueue(&hndl->recvQ, &recvMsg);
-	}
+		// maybe instead of the block below just enter the _recv function
 
-	S_COImessage sendMsg;
-
-	if (dequeue(&hndl->sendQ, &sendMsg))
-	{
-		uCAN_MSG cMsg_1;
-		uCAN_MSG cMsg_2;
-
-		_encodeCANMsg(&sendMsg, &cMsg_1, &cMsg_2);
-		CANSPI_Transmit(&cMsg_1);
-		CANSPI_Transmit(&cMsg_2);
 	}
 }
 
+/**
+ * @brief reads the next CAN message from the received messages queue.
+ *
+ * This function reads the next CAN message from the received messages
+ * queue.
+ *
+ * @return 1 if a message was read, 0 if the queue is empty. */
 int readNextMsg(CAN_HNDL hndl, S_COImessage* msg)
 {
 	if (isQueueEmpty(&hndl->recvQ))
@@ -176,28 +199,35 @@ uint8_t configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToA
 	{
 		return 0;
 	}
-
 }
 
-void _sendCANMsg(S_COImessage* msg)
+/*
+ * This function currently is not checking whether the transmission
+ * operation was indeed successful.
+ * */
+void _sendCANMsg(CAN_HNDL hndl, S_COImessage* msg)
 {
+	uCAN_MSG cMsg_1;
+	uCAN_MSG cMsg_2;
 
-//	uCAN_MSG sendMsg_1;
-//	uCAN_MSG sendMsg_2;
-
-
-//	CANSPI_Transmit();
+	_encodeCANMsg(hndl, msg, &cMsg_1, &cMsg_2);
+	CANSPI_Transmit(&cMsg_1);
+	CANSPI_Transmit(&cMsg_2);
 }
 
-void _recvCANMsg(S_COImessage* msg)
+void _recvCANMsg(CAN_HNDL hndl, uCAN_MSG *CANMsg)
 {
+	S_COImessage recvMsg;
 
+	_decodeCANMsg(CANMsg, &recvMsg);
+	enqueue(&hndl->recvQ, &recvMsg);
 }
 
-void _encodeCANMsg(S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2)
+void _encodeCANMsg(CAN_HNDL hndl, S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2)
 {
+
 	cMsg_1->frame.idType = dSTANDARD_CAN_MSG_ID_2_0B;
-	cMsg_1->frame.id = selfID;
+	cMsg_1->frame.id = MSG_PART_1(hndl->selfID);
 	cMsg_1->frame.dlc = 8;				// message size - 8 bytes.
 
 	cMsg_1->frame.data0 = msg->_data[0];	// timestamp param
@@ -211,8 +241,8 @@ void _encodeCANMsg(S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2)
 	cMsg_1->frame.data7 = msg->_data[7];	// J param
 
 	cMsg_2->frame.idType = dSTANDARD_CAN_MSG_ID_2_0B;
-	cMsg_2->frame.id = selfID;
-	cMsg_2->frame.dlc = 8;				// message size - 8 bytes.
+	cMsg_2->frame.id = MSG_PART_2(hndl->selfID);
+	cMsg_2->frame.dlc = 8;					// message size - 8 bytes.
 
 	cMsg_2->frame.data0 = msg->_data[0];	// timestamp param
 	cMsg_2->frame.data1 = msg->_data[1];	// timestamp param
