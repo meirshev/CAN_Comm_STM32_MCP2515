@@ -35,6 +35,9 @@
 #define MSG_PART_1(id) (0x00 | id)
 #define MSG_PART_2(id) (0x80 | id)
 
+#define ID_MASK  	0x7F
+#define PART_MASK	0X80
+
 typedef int bool;
 
 /*
@@ -48,12 +51,25 @@ typedef struct{
 	uint8_t 	selfID;
 }CAN_data;
 
+typedef union
+{
+	struct{
+		uint32_t 	timeStamp;
+	}param;
+
+	uint8_t 	_data[4];
+}timeDecoder;
+
+
 typedef CAN_data* CAN_HNDL;
 
 CAN_data 		_cData;
+CAN_filters		_filters;
 S_COImessage	sendMsgsArr[SEND_QUEUE_SIZE];
 S_COImessage	recvMsgsArr[RECEIVE_QUEUE_SIZE];
-CAN_filters		filters;
+
+uCAN_MSG		msgsBuffer[NUM_OF_NODES];
+
 		// should be set only from the NODE_IDS Enum.
 
 /* Public Functions Prototypes */
@@ -67,5 +83,8 @@ uint8_t		configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenTo
 void 		_sendCANMsg(CAN_HNDL hndl, S_COImessage* msg);
 void 		_recvCANMsg(CAN_HNDL hndl,uCAN_MSG *CANMsg);
 void 		_encodeCANMsg(CAN_HNDL hndl, S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2);
-void 		_decodeCANMsg(uCAN_MSG *cMsg, S_COImessage* msg);
+void 		_decodeCANMsg(uCAN_MSG *CANMsgPart1, uCAN_MSG *CANMsgPart2, S_COImessage* decodedMsg);
+void 		_CANMsgHandler(uCAN_MSG *cMsg);
+void		_storeCANMsg(uCAN_MSG *cMsg, int msgIdx);
+
 #endif /* INC_CAN_COMM_H_ */

@@ -234,9 +234,9 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x90 ./Core/Src/CANSPI.o
  .debug_macro   0x0000000000000000      0x5a0 ./Core/Src/CANSPI.o
  .debug_macro   0x0000000000000000      0x1e4 ./Core/Src/CANSPI.o
- .debug_macro   0x0000000000000000       0x1c ./Core/Src/CANSPI.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/CANSPI.o
  .debug_line    0x0000000000000000      0xb8c ./Core/Src/CANSPI.o
- .debug_str     0x0000000000000000   0x1669de ./Core/Src/CANSPI.o
+ .debug_str     0x0000000000000000   0x1669ee ./Core/Src/CANSPI.o
  .comment       0x0000000000000000       0x51 ./Core/Src/CANSPI.o
  .debug_frame   0x0000000000000000      0x1a0 ./Core/Src/CANSPI.o
  .ARM.attributes
@@ -317,16 +317,18 @@ Discarded input sections
  .data          0x0000000000000000        0x0 ./Core/Src/CAN_comm.o
  .bss           0x0000000000000000        0x0 ./Core/Src/CAN_comm.o
  .bss._cData    0x0000000000000000       0x3c ./Core/Src/CAN_comm.o
+ .bss._filters  0x0000000000000000       0x20 ./Core/Src/CAN_comm.o
  .bss.sendMsgsArr
                 0x0000000000000000        0xc ./Core/Src/CAN_comm.o
  .bss.recvMsgsArr
                 0x0000000000000000       0x3c ./Core/Src/CAN_comm.o
- .bss.filters   0x0000000000000000       0x20 ./Core/Src/CAN_comm.o
+ .bss.msgsBuffer
+                0x0000000000000000       0x78 ./Core/Src/CAN_comm.o
  .text.initCANComm
                 0x0000000000000000       0x40 ./Core/Src/CAN_comm.o
  .text.sendDataManager
                 0x0000000000000000       0x4c ./Core/Src/CAN_comm.o
- .text.loop     0x0000000000000000       0x3a ./Core/Src/CAN_comm.o
+ .text.loop     0x0000000000000000       0x30 ./Core/Src/CAN_comm.o
  .text.readNextMsg
                 0x0000000000000000       0x32 ./Core/Src/CAN_comm.o
  .text.configID
@@ -334,16 +336,20 @@ Discarded input sections
  .text._sendCANMsg
                 0x0000000000000000       0x36 ./Core/Src/CAN_comm.o
  .text._recvCANMsg
-                0x0000000000000000       0x2e ./Core/Src/CAN_comm.o
+                0x0000000000000000       0x1e ./Core/Src/CAN_comm.o
  .text._encodeCANMsg
                 0x0000000000000000       0xd0 ./Core/Src/CAN_comm.o
  .text._decodeCANMsg
-                0x0000000000000000       0x16 ./Core/Src/CAN_comm.o
- .debug_info    0x0000000000000000      0x9c3 ./Core/Src/CAN_comm.o
- .debug_abbrev  0x0000000000000000      0x1fd ./Core/Src/CAN_comm.o
+                0x0000000000000000       0x78 ./Core/Src/CAN_comm.o
+ .text._CANMsgHandler
+                0x0000000000000000      0x10c ./Core/Src/CAN_comm.o
+ .text._storeCANMsg
+                0x0000000000000000       0x4c ./Core/Src/CAN_comm.o
+ .debug_info    0x0000000000000000      0xb33 ./Core/Src/CAN_comm.o
+ .debug_abbrev  0x0000000000000000      0x22a ./Core/Src/CAN_comm.o
  .debug_aranges
-                0x0000000000000000       0x60 ./Core/Src/CAN_comm.o
- .debug_ranges  0x0000000000000000       0x50 ./Core/Src/CAN_comm.o
+                0x0000000000000000       0x70 ./Core/Src/CAN_comm.o
+ .debug_ranges  0x0000000000000000       0x60 ./Core/Src/CAN_comm.o
  .debug_macro   0x0000000000000000      0x32f ./Core/Src/CAN_comm.o
  .debug_macro   0x0000000000000000      0xa90 ./Core/Src/CAN_comm.o
  .debug_macro   0x0000000000000000      0x24a ./Core/Src/CAN_comm.o
@@ -415,12 +421,12 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x5a0 ./Core/Src/CAN_comm.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/CAN_comm.o
  .debug_macro   0x0000000000000000      0x1e4 ./Core/Src/CAN_comm.o
- .debug_macro   0x0000000000000000       0x1c ./Core/Src/CAN_comm.o
- .debug_macro   0x0000000000000000       0x2e ./Core/Src/CAN_comm.o
- .debug_line    0x0000000000000000      0xb06 ./Core/Src/CAN_comm.o
- .debug_str     0x0000000000000000   0x166836 ./Core/Src/CAN_comm.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/CAN_comm.o
+ .debug_macro   0x0000000000000000       0x3a ./Core/Src/CAN_comm.o
+ .debug_line    0x0000000000000000      0xbf9 ./Core/Src/CAN_comm.o
+ .debug_str     0x0000000000000000   0x1668fc ./Core/Src/CAN_comm.o
  .comment       0x0000000000000000       0x51 ./Core/Src/CAN_comm.o
- .debug_frame   0x0000000000000000      0x158 ./Core/Src/CAN_comm.o
+ .debug_frame   0x0000000000000000      0x1a4 ./Core/Src/CAN_comm.o
  .ARM.attributes
                 0x0000000000000000       0x32 ./Core/Src/CAN_comm.o
  .group         0x0000000000000000        0xc ./Core/Src/CAN_ds.o
@@ -505,11 +511,13 @@ Discarded input sections
                 0x0000000000000000       0x36 ./Core/Src/CAN_ds.o
  .text.enqueue  0x0000000000000000       0xaa ./Core/Src/CAN_ds.o
  .text.dequeue  0x0000000000000000       0xa8 ./Core/Src/CAN_ds.o
- .debug_info    0x0000000000000000      0x36c ./Core/Src/CAN_ds.o
+ .text.getNodeIndex
+                0x0000000000000000       0x5e ./Core/Src/CAN_ds.o
+ .debug_info    0x0000000000000000      0x396 ./Core/Src/CAN_ds.o
  .debug_abbrev  0x0000000000000000      0x17d ./Core/Src/CAN_ds.o
  .debug_aranges
-                0x0000000000000000       0x48 ./Core/Src/CAN_ds.o
- .debug_ranges  0x0000000000000000       0x38 ./Core/Src/CAN_ds.o
+                0x0000000000000000       0x50 ./Core/Src/CAN_ds.o
+ .debug_ranges  0x0000000000000000       0x40 ./Core/Src/CAN_ds.o
  .debug_macro   0x0000000000000000      0x308 ./Core/Src/CAN_ds.o
  .debug_macro   0x0000000000000000      0xa90 ./Core/Src/CAN_ds.o
  .debug_macro   0x0000000000000000      0x24a ./Core/Src/CAN_ds.o
@@ -580,10 +588,10 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x90 ./Core/Src/CAN_ds.o
  .debug_macro   0x0000000000000000      0x5a0 ./Core/Src/CAN_ds.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/CAN_ds.o
- .debug_line    0x0000000000000000      0xa52 ./Core/Src/CAN_ds.o
- .debug_str     0x0000000000000000   0x165dd2 ./Core/Src/CAN_ds.o
+ .debug_line    0x0000000000000000      0xa92 ./Core/Src/CAN_ds.o
+ .debug_str     0x0000000000000000   0x165de6 ./Core/Src/CAN_ds.o
  .comment       0x0000000000000000       0x51 ./Core/Src/CAN_ds.o
- .debug_frame   0x0000000000000000       0xf8 ./Core/Src/CAN_ds.o
+ .debug_frame   0x0000000000000000      0x120 ./Core/Src/CAN_ds.o
  .ARM.attributes
                 0x0000000000000000       0x32 ./Core/Src/CAN_ds.o
  .group         0x0000000000000000        0xc ./Core/Src/MCP2515.o
@@ -1113,7 +1121,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x5a0 ./Core/Src/main.o
  .debug_macro   0x0000000000000000       0x35 ./Core/Src/main.o
  .debug_macro   0x0000000000000000      0x1e4 ./Core/Src/main.o
- .debug_macro   0x0000000000000000       0x1c ./Core/Src/main.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/main.o
  .group         0x0000000000000000        0xc ./Core/Src/stm32h7xx_hal_msp.o
  .group         0x0000000000000000        0xc ./Core/Src/stm32h7xx_hal_msp.o
  .group         0x0000000000000000        0xc ./Core/Src/stm32h7xx_hal_msp.o
@@ -8361,48 +8369,48 @@ LOAD c:/st/stm32cubeide_1.9.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .debug_line    0x000000000001b8ad      0xf7b ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.o
  .debug_line    0x000000000001c828     0x1c9a ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.o
 
-.debug_str      0x0000000000000000   0x16f695
- .debug_str     0x0000000000000000   0x168796 ./Core/Src/main.o
-                                     0x168e2e (size before relaxing)
- .debug_str     0x0000000000168796      0x458 ./Core/Src/stm32h7xx_hal_msp.o
+.debug_str      0x0000000000000000   0x16f6a5
+ .debug_str     0x0000000000000000   0x1687a6 ./Core/Src/main.o
+                                     0x168e3e (size before relaxing)
+ .debug_str     0x00000000001687a6      0x458 ./Core/Src/stm32h7xx_hal_msp.o
                                      0x168501 (size before relaxing)
- .debug_str     0x0000000000168bee      0x14d ./Core/Src/stm32h7xx_it.o
+ .debug_str     0x0000000000168bfe      0x14d ./Core/Src/stm32h7xx_it.o
                                      0x1667bb (size before relaxing)
- .debug_str     0x0000000000168d3b      0x330 ./Core/Src/system_stm32h7xx.o
+ .debug_str     0x0000000000168d4b      0x330 ./Core/Src/system_stm32h7xx.o
                                      0x1661fd (size before relaxing)
- .debug_str     0x000000000016906b       0x36 ./Core/Startup/startup_stm32h743zitx.o
+ .debug_str     0x000000000016907b       0x36 ./Core/Startup/startup_stm32h743zitx.o
                                          0x72 (size before relaxing)
- .debug_str     0x00000000001690a1      0x7f9 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.o
+ .debug_str     0x00000000001690b1      0x7f9 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.o
                                      0x167113 (size before relaxing)
- .debug_str     0x000000000016989a      0x32c ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.o
+ .debug_str     0x00000000001698aa      0x32c ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.o
                                      0x166b16 (size before relaxing)
- .debug_str     0x0000000000169bc6      0x886 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma.o
+ .debug_str     0x0000000000169bd6      0x886 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma.o
                                      0x166937 (size before relaxing)
- .debug_str     0x000000000016a44c     0x10b1 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth.o
+ .debug_str     0x000000000016a45c     0x10b1 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth.o
                                      0x167b04 (size before relaxing)
- .debug_str     0x000000000016b4fd       0xb3 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.o
+ .debug_str     0x000000000016b50d       0xb3 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.o
                                      0x1661b4 (size before relaxing)
- .debug_str     0x000000000016b5b0      0x806 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd.o
+ .debug_str     0x000000000016b5c0      0x806 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd.o
                                      0x16694c (size before relaxing)
- .debug_str     0x000000000016bdb6      0x174 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd_ex.o
+ .debug_str     0x000000000016bdc6      0x174 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd_ex.o
                                      0x1662e9 (size before relaxing)
- .debug_str     0x000000000016bf2a      0x61f ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr_ex.o
+ .debug_str     0x000000000016bf3a      0x61f ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr_ex.o
                                      0x166675 (size before relaxing)
- .debug_str     0x000000000016c549      0x21a ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.o
+ .debug_str     0x000000000016c559      0x21a ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.o
                                      0x166598 (size before relaxing)
- .debug_str     0x000000000016c763      0x64b ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc_ex.o
+ .debug_str     0x000000000016c773      0x64b ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc_ex.o
                                      0x166a50 (size before relaxing)
- .debug_str     0x000000000016cdae      0x535 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.o
+ .debug_str     0x000000000016cdbe      0x535 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.o
                                      0x1668ae (size before relaxing)
- .debug_str     0x000000000016d2e3      0xddc ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.o
+ .debug_str     0x000000000016d2f3      0xddc ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.o
                                      0x167327 (size before relaxing)
- .debug_str     0x000000000016e0bf      0x590 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.o
+ .debug_str     0x000000000016e0cf      0x590 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.o
                                      0x166c5f (size before relaxing)
- .debug_str     0x000000000016e64f      0x9c7 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.o
+ .debug_str     0x000000000016e65f      0x9c7 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.o
                                      0x1670b1 (size before relaxing)
- .debug_str     0x000000000016f016      0x240 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.o
+ .debug_str     0x000000000016f026      0x240 ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.o
                                      0x166657 (size before relaxing)
- .debug_str     0x000000000016f256      0x43f ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.o
+ .debug_str     0x000000000016f266      0x43f ./Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.o
                                      0x1667d3 (size before relaxing)
 
 .comment        0x0000000000000000       0x50

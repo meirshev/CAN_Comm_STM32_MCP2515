@@ -25,6 +25,8 @@
 
 #define true  1
 #define false 0
+#define CAN_MSG_SIZE 14
+
 typedef int bool;
 
 typedef union {

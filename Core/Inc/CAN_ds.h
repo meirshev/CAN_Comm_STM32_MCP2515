@@ -71,11 +71,15 @@ typedef struct{
 
 
 void 			initCommConfig(CommConfig* nodes, uint8_t* selfID);
+int				getNodeIndex(int nodeID);
+
 void 			initQueue(Queue* q, S_COImessage* msgsArr, uint8_t size);
 void			enqueue(Queue* q, S_COImessage* element);
 int 			dequeue(Queue* q, S_COImessage* msg);
 bool 			isQueueEmpty(Queue* q);
 bool 			isQueueFull(Queue* q);
+
+
 
 
 

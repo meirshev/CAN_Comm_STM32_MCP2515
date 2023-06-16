@@ -98,3 +98,39 @@ int dequeue(Queue* q, S_COImessage* msg)
 
     return 1;
 }
+
+int getNodeIndex(int nodeID)
+{
+	if (nodeID == NODE_O_ID)
+	{
+		return 0;
+	}
+	else if(nodeID == NODE_1_ID)
+	{
+		return 1;
+	}
+	else if(nodeID == NODE_2_ID)
+	{
+		return 2;
+	}
+	else if(nodeID == NODE_3_ID)
+	{
+		return 3;
+	}
+	else if(nodeID == NODE_4_ID)
+	{
+		return 4;
+	}
+	else if(nodeID == NODE_5_ID)
+	{
+		return 5;
+	}
+	else if(nodeID == NODE_6_ID)
+	{
+		return 6;
+	}
+	else
+	{
+		return -1;
+	}
+}
