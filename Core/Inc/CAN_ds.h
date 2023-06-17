@@ -23,8 +23,6 @@
 
 #include "stm32h7xx_hal.h"
 
-
-
 #define NUM_OF_NODES 6
 
 #define true 	1
@@ -32,6 +30,11 @@
 
 typedef int bool;
 
+/* every node in the CAN network must be assigned
+ * with one of the IDs defined in this enumerator.
+ * furthermore, no two CAN nodes in the network can
+ * be assigned with the same ID.
+ *  */
 enum NODE_IDS{
 
 	NODE_O_ID 	= 0x01,		// ID: 00000001
@@ -45,7 +48,10 @@ enum NODE_IDS{
 	NO_ID 		= -1		// For safety check-ups - need to implement in the future.
 };
 
+/* S_COImessage data structure, contains all the relevant
+ * data to perform the center of inertia algorithms. */
 typedef union{
+
 	struct{
 		uint32_t 	timeStamp;
 		float 		J;
@@ -55,13 +61,22 @@ typedef union{
 
 }S_COImessage;
 
-
+/* the CommConfig data structure contains an array of all
+ * the nodes in the CAN network where each index in the
+ * array corresponds to a node's number in the network.
+ * each element in the corresponding index states whether
+ * this node is listening to any of the other nodes by
+ * a simple true or false value.
+ * */
 typedef struct{
 
 	bool commNodes[NUM_OF_NODES];
 
 }CommConfig;
 
+/* a queue data structure, its corresponding methods
+ * for adding and getting elements are implemented below.
+ * */
 typedef struct{
 	S_COImessage 	*msgsArr;
 	uint8_t		 	QSize;
@@ -69,7 +84,7 @@ typedef struct{
     int 			rear;
 } Queue;
 
-
+/* functions prototypes */
 void 			initCommConfig(CommConfig* nodes, uint8_t* selfID);
 int				getNodeIndex(int nodeID);
 
@@ -78,9 +93,6 @@ void			enqueue(Queue* q, S_COImessage* element);
 int 			dequeue(Queue* q, S_COImessage* msg);
 bool 			isQueueEmpty(Queue* q);
 bool 			isQueueFull(Queue* q);
-
-
-
 
 
 #endif /* INC_CAN_DS_H_ */

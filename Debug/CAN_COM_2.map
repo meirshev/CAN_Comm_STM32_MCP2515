@@ -327,8 +327,8 @@ Discarded input sections
  .text.initCANComm
                 0x0000000000000000       0x40 ./Core/Src/CAN_comm.o
  .text.sendDataManager
-                0x0000000000000000       0x4c ./Core/Src/CAN_comm.o
- .text.loop     0x0000000000000000       0x30 ./Core/Src/CAN_comm.o
+                0x0000000000000000       0x4a ./Core/Src/CAN_comm.o
+ .text.loop     0x0000000000000000       0x34 ./Core/Src/CAN_comm.o
  .text.readNextMsg
                 0x0000000000000000       0x32 ./Core/Src/CAN_comm.o
  .text.configID
@@ -336,7 +336,7 @@ Discarded input sections
  .text._sendCANMsg
                 0x0000000000000000       0x36 ./Core/Src/CAN_comm.o
  .text._recvCANMsg
-                0x0000000000000000       0x1e ./Core/Src/CAN_comm.o
+                0x0000000000000000       0x26 ./Core/Src/CAN_comm.o
  .text._encodeCANMsg
                 0x0000000000000000       0xd0 ./Core/Src/CAN_comm.o
  .text._decodeCANMsg
@@ -345,8 +345,8 @@ Discarded input sections
                 0x0000000000000000      0x10c ./Core/Src/CAN_comm.o
  .text._storeCANMsg
                 0x0000000000000000       0x4c ./Core/Src/CAN_comm.o
- .debug_info    0x0000000000000000      0xb33 ./Core/Src/CAN_comm.o
- .debug_abbrev  0x0000000000000000      0x22a ./Core/Src/CAN_comm.o
+ .debug_info    0x0000000000000000      0xb16 ./Core/Src/CAN_comm.o
+ .debug_abbrev  0x0000000000000000      0x239 ./Core/Src/CAN_comm.o
  .debug_aranges
                 0x0000000000000000       0x70 ./Core/Src/CAN_comm.o
  .debug_ranges  0x0000000000000000       0x60 ./Core/Src/CAN_comm.o
@@ -423,8 +423,8 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x1e4 ./Core/Src/CAN_comm.o
  .debug_macro   0x0000000000000000       0x22 ./Core/Src/CAN_comm.o
  .debug_macro   0x0000000000000000       0x3a ./Core/Src/CAN_comm.o
- .debug_line    0x0000000000000000      0xbf9 ./Core/Src/CAN_comm.o
- .debug_str     0x0000000000000000   0x1668fc ./Core/Src/CAN_comm.o
+ .debug_line    0x0000000000000000      0xc04 ./Core/Src/CAN_comm.o
+ .debug_str     0x0000000000000000   0x1668f5 ./Core/Src/CAN_comm.o
  .comment       0x0000000000000000       0x51 ./Core/Src/CAN_comm.o
  .debug_frame   0x0000000000000000      0x1a4 ./Core/Src/CAN_comm.o
  .ARM.attributes
@@ -588,7 +588,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x90 ./Core/Src/CAN_ds.o
  .debug_macro   0x0000000000000000      0x5a0 ./Core/Src/CAN_ds.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/CAN_ds.o
- .debug_line    0x0000000000000000      0xa92 ./Core/Src/CAN_ds.o
+ .debug_line    0x0000000000000000      0xa95 ./Core/Src/CAN_ds.o
  .debug_str     0x0000000000000000   0x165de6 ./Core/Src/CAN_ds.o
  .comment       0x0000000000000000       0x51 ./Core/Src/CAN_ds.o
  .debug_frame   0x0000000000000000      0x120 ./Core/Src/CAN_ds.o

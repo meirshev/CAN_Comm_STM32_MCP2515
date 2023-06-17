@@ -51,6 +51,9 @@ typedef struct{
 	uint8_t 	selfID;
 }CAN_data;
 
+/* a buffer usage data structure used for the conversion
+ * of the encoded data into a timestamp value
+ * */
 typedef union
 {
 	struct{
@@ -60,28 +63,26 @@ typedef union
 	uint8_t 	_data[4];
 }timeDecoder;
 
-
 typedef CAN_data* CAN_HNDL;
 
+/* static data structures used by the CAN communication module */
 CAN_data 		_cData;
 CAN_filters		_filters;
 S_COImessage	sendMsgsArr[SEND_QUEUE_SIZE];
 S_COImessage	recvMsgsArr[RECEIVE_QUEUE_SIZE];
-
 uCAN_MSG		msgsBuffer[NUM_OF_NODES];
 
-		// should be set only from the NODE_IDS Enum.
 
 /* Public Functions Prototypes */
 CAN_HNDL	initCANComm();
 void 		loop(CAN_HNDL hndl);
-int 		sendDataManager(CAN_HNDL hndl, S_COImessage* msg);
+void 		sendDataManager(CAN_HNDL hndl, S_COImessage* msg);
 int 		readNextMsg(CAN_HNDL hndl, S_COImessage* msg);
 uint8_t		configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll);
 
 /* Private Functions Prototypes */
 void 		_sendCANMsg(CAN_HNDL hndl, S_COImessage* msg);
-void 		_recvCANMsg(CAN_HNDL hndl,uCAN_MSG *CANMsg);
+void 		_recvCANMsg();
 void 		_encodeCANMsg(CAN_HNDL hndl, S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2);
 void 		_decodeCANMsg(uCAN_MSG *CANMsgPart1, uCAN_MSG *CANMsgPart2, S_COImessage* decodedMsg);
 void 		_CANMsgHandler(uCAN_MSG *cMsg);

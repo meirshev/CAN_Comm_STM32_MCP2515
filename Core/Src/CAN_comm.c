@@ -38,17 +38,18 @@ CAN_HNDL initCANComm()
 }
 
 /**
- * @brief Attempts to send the next in queue CAN message if possible.
+ * @brief Attempts to send the next in-queue CAN message if possible.
  *
  * This function first checks the queue of CAN messages to send and tries
  * to send the next message in the queue. If the queue is empty, it tries
  * to send the current message directly.
  *
+ * @param hndl: a handle to a CAN communication module.
+ * @param msg: message to send over the CAN module.
  *
- * @return 1 if a message was sent, 0 otherwise. */
-int sendDataManager(CAN_HNDL hndl, S_COImessage* msg)
+ * */
+void sendDataManager(CAN_HNDL hndl, S_COImessage* msg)
 {
-
 	if (isQueueEmpty(&hndl->sendQ))
 	{
 		_sendCANMsg(hndl, msg);
@@ -60,8 +61,6 @@ int sendDataManager(CAN_HNDL hndl, S_COImessage* msg)
 		enqueue(&hndl->sendQ, msg);
 		_sendCANMsg(hndl, msg);
 	}
-
-	return 1;		// not yet fully configured - need to decide what to do with the return value of CANSPI_Transmit() func.
 }
 
 /**
@@ -69,6 +68,8 @@ int sendDataManager(CAN_HNDL hndl, S_COImessage* msg)
  *
  * This function first tries to send the next message in the send messages
  * queue. Then it tries to read a pending message from the MCP1515 module.
+ *
+ * @param hndl: a handle to a CAN communication module.
  *
  * */
 void loop(CAN_HNDL hndl)
@@ -80,6 +81,7 @@ void loop(CAN_HNDL hndl)
 		_sendCANMsg(hndl, &sendMsg);
 	}
 
+	_recvCANMsg();
 }
 
 /**
@@ -87,6 +89,9 @@ void loop(CAN_HNDL hndl)
  *
  * This function reads the next CAN message from the received messages
  * queue.
+ *
+ * @param hndl: a handle to a CAN communication module.
+ * @param msg: a pointer to a S_COImessage to place the dequeued message.
  *
  * @return 1 if a message was read, 0 if the queue is empty. */
 int readNextMsg(CAN_HNDL hndl, S_COImessage* msg)
@@ -101,6 +106,23 @@ int readNextMsg(CAN_HNDL hndl, S_COImessage* msg)
 	return 1;
 }
 
+/**
+ * @brief Configures the local CAN node parameters.
+ *
+ * This function configures the CAN node communication parameters -
+ * filters, IDs, masks.
+ *
+ * @param hndl: a handle to a CAN communication module.
+ * @param id: this is set according to the 'CAN_ds.h' module's 'NODE_IDS'
+ * enumerator, please refer to the 'CAN_ds.h' module for more info.
+ * @param commList: a boolean array where each index corresponds to
+ * a node in the CAN communication network (of size 'NUM_OF_NODES', see
+ * 'CAN_ds.h' module for more details), 'true' states that this node
+ * should listen to the node corresponding to that index.
+ * @param listenToAll: if set to true, this node will listen to all the
+ * nodes that exists in the CAN network.
+ *
+ * @return 1 if the MCP2515 CAN module was successfully initialized, 0 otherwise. */
 uint8_t configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToAll)
 {
 
@@ -194,10 +216,18 @@ uint8_t configID(CAN_HNDL hndl, uint8_t id, CommConfig* commList, bool listenToA
 	}
 }
 
-/*
- * This function currently is not checking whether the transmission
- * operation was indeed successful.
- * */
+/**
+ * @brief this function sends a given S_COImessage over the
+ * CAN network.
+ *
+ * This function takes a S_COImessage, encodes it
+ * into CAN based, MCP1515 CAN module format and then sends
+ * it to the CAN network's nodes.
+ *
+ * @param hndl: a handle to a CAN communication module.
+ * @param msg: a pointer to a S_COImessage to send.
+ *
+ **/
 void _sendCANMsg(CAN_HNDL hndl, S_COImessage* msg)
 {
 	uCAN_MSG cMsg_1;
@@ -208,21 +238,50 @@ void _sendCANMsg(CAN_HNDL hndl, S_COImessage* msg)
 	CANSPI_Transmit(&cMsg_2);
 }
 
-void _recvCANMsg(CAN_HNDL hndl, uCAN_MSG *CANMsg)
+/**
+ * @brief this function checks for a incoming messages and
+ * stores them.
+ *
+ * This function checks the MCP2515 CAN module for pending
+ * CAN messages, in case there's a pending message, it is
+ * read and checked if its other part is already stored, if
+ * so, the two CAN messages are combined to construct a full
+ * S_COImessage and then store it in the received messages queue.
+ *
+ **/
+void _recvCANMsg()
 {
-
 	uCAN_MSG rxMsg;
 
 	if(not CANSPI_Receive(&rxMsg))
 	{
 		return;
 	}
-
-
-//	_decodeCANMsg(CANMsg, &recvMsg);
-//	enqueue(&hndl->recvQ, &recvMsg);
+	else
+	{
+		_CANMsgHandler(&rxMsg);
+	}
 }
 
+/**
+ * @brief this function encodes an S_COImessage into a valid
+ * CAN message to be sent over the network
+ *
+ * This function decomposes a S_COImessage into two CAN
+ * messages, the first CAN message stores the timestamp
+ * and the inertia and the second CAN message stores the
+ * timestamp and omega. The inclusion of the timestamp data
+ * in both CAN messages enables the decoding of the two
+ * messages in the receiving CAN node.
+ *
+ * @param hndl: a handle to a CAN communication module.
+ * @param msg: a pointer to a S_COImessage to encode.
+ * @param cMsg_1: a pointer to a uCAN_MSG to store the first part of the
+ * S_COImessage.
+ * @param cMsg_2: a pointer to a uCAN_MSG to store the second part of the
+ * S_COImessage.
+ *
+ **/
 void _encodeCANMsg(CAN_HNDL hndl, S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG *cMsg_2)
 {
 
@@ -255,6 +314,21 @@ void _encodeCANMsg(CAN_HNDL hndl, S_COImessage* msg, uCAN_MSG *cMsg_1, uCAN_MSG 
 	cMsg_2->frame.data7 = msg->_data[7];	// omega param
 }
 
+/**
+ * @brief this function decodes a two CAN message into an
+ * S_COImessage.
+ *
+ * This function takes two received CAN messages and extracts
+ * the timestamp, J (inertia) and omega to form an S_COImessage.
+ *
+ * @param CANMsgPart1: a pointer to a uCAN_MSG that stores the first
+ * part of the S_COImessage.
+ * @param CANMsgPart2: a pointer to a uCAN_MSG that stores the second
+ * part of the S_COImessage.
+ * @param decodedMsg: a pointer to an S_COImessage to store the decoded
+ * message.
+ *
+ **/
 void _decodeCANMsg(uCAN_MSG *CANMsgPart1, uCAN_MSG *CANMsgPart2, S_COImessage* decodedMsg)
 {
 	/* decode timestamp data */
@@ -276,6 +350,18 @@ void _decodeCANMsg(uCAN_MSG *CANMsgPart1, uCAN_MSG *CANMsgPart2, S_COImessage* d
 	decodedMsg->_data[11] = CANMsgPart2->frame.data7;
 }
 
+/**
+ * @brief this function decodes and stores CAN messages.
+ *
+ * This function checks if the newly received message
+ * has its complement message already stored, if so, it will
+ * decode the message and construct a corresponding S_COImessage
+ * to store in the received messages queue. else it will immediately
+ * store this message in the waiting list.
+ *
+ * @param cMsg: a newly received CAN message.
+ *
+ * */
 void _CANMsgHandler(uCAN_MSG *cMsg)
 {
 	int sendingNodeID = getNodeIndex(cMsg->frame.id & ID_MASK);
@@ -302,7 +388,7 @@ void _CANMsgHandler(uCAN_MSG *cMsg)
 		CANMsgParts[(msgsBuffer[sendingNodeID].frame.id & PART_MASK) >> 7] 	= &msgsBuffer[sendingNodeID];
 
 		_decodeCANMsg(CANMsgParts[0], CANMsgParts[1], &msg);
-		enqueue(&_cData.sendQ, &msg);
+		enqueue(&_cData.recvQ, &msg);
 	}
 	else
 	{
@@ -311,6 +397,18 @@ void _CANMsgHandler(uCAN_MSG *cMsg)
 	}
 }
 
+/**
+ * @brief this function stores a received CAN message.
+ *
+ * This function stores a received CAN message in the
+ * waiting list for incomplete messages (can't construct
+ * an S_COImessage, 1 part is missing).
+ *
+ * @param cMsg: a newly received CAN message.
+ * @param msgIdx: the corresponding message index. this value
+ * is actually the CAN node's index in the CAN network.
+ *
+ * */
 void _storeCANMsg(uCAN_MSG *cMsg, int msgIdx)
 {
 	for(int i=0; i<CAN_MSG_SIZE; i++)
